@@ -326,7 +326,7 @@ export class DashboardService {
         type: 'receipts_pending_review',
         count: pendingReceipts,
         label: `${pendingReceipts} receipt${pendingReceipts > 1 ? 's' : ''} need review`,
-        href: '/statements/submit',
+        href: '/statements/submit?status=needs_review',
       });
     }
 

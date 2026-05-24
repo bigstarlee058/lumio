@@ -359,7 +359,9 @@ export class GmailController {
       queryBuilder.andWhere(AMOUNT_PRESENT_SQL);
     } else if (hasAmountFilter === false) {
       queryBuilder.andWhere(AMOUNT_MISSING_SQL);
-    } else if (!includeInvalidReceipts) {
+    } else if (!includeInvalidReceipts && !status) {
+      // When browsing without an explicit status filter, hide receipts with no parsed amount
+      // to reduce noise. When a status is explicitly requested (e.g. needs_review), show all.
       queryBuilder.andWhere(AMOUNT_PRESENT_SQL);
     }
 

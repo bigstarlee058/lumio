@@ -26,6 +26,7 @@ interface StatementRecord {
 interface UseStatementsListDataParams {
   appliedFilters: StatementFilters;
   categoryId?: string | null;
+  receiptStatus?: string | null;
   search: string;
   stage: string;
   user: unknown;
@@ -63,6 +64,7 @@ export interface UseStatementsListDataResult<T extends StatementRecord = Stateme
 export function useStatementsListData<T extends StatementRecord = StatementRecord>({
   appliedFilters,
   categoryId,
+  receiptStatus,
   search,
   stage,
   user,
@@ -158,9 +160,12 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
         offset: Math.max(0, (page - 1) * pageSize),
         includeInvalid: false,
         ...(categoryId ? { categoryId } : {}),
+        ...(receiptStatus ? { status: receiptStatus } : {}),
       });
       const receipts = Array.isArray(response.data?.receipts) ? response.data.receipts : [];
-      const filtered = receipts.filter(hasGmailReceiptAmount);
+      // When a specific status is requested (e.g. needs_review), show all matching receipts
+      // regardless of whether an amount was parsed. Otherwise filter to amount-present only.
+      const filtered = receiptStatus ? receipts : receipts.filter(hasGmailReceiptAmount);
       setGmailReceipts(filtered);
     } catch (error) {
       console.error('Failed to load Gmail receipts:', error);
@@ -196,7 +201,7 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
       void loadGmailReceipts({ silent: true, showErrorToast: false });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, search, appliedFilters, categoryId, stage]);
+  }, [user, search, appliedFilters, categoryId, receiptStatus, stage]);
 
   // Read gmail sync skeleton count from sessionStorage on mount/stage change
   useEffect(() => {

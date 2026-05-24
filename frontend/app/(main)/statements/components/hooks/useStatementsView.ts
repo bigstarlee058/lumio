@@ -338,6 +338,11 @@ export function useStatementsView({ stage, router, searchParams }: UseStatements
     setPage(1);
   }, [routeCategoryId, router, searchParams, stage]);
 
+  const routeReceiptStatus = useMemo(
+    () => searchParams.get('status') || null,
+    [searchParams],
+  );
+
   const {
     statements,
     gmailReceipts,
@@ -350,6 +355,7 @@ export function useStatementsView({ stage, router, searchParams }: UseStatements
   } = useStatementsListData<Statement>({
     appliedFilters: filterState.appliedFilters,
     categoryId: routeCategoryId,
+    receiptStatus: routeReceiptStatus,
     search,
     stage,
     user,

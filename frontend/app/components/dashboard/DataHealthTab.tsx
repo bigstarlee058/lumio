@@ -99,7 +99,7 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
     quickLinks.push({
       id: 'pending-receipts',
       label: `Review ${dataHealth.receiptsPendingReview} receipt${dataHealth.receiptsPendingReview !== 1 ? 's' : ''}`,
-      href: '/statements/submit',
+      href: '/statements/submit?status=needs_review',
     });
   }
 
