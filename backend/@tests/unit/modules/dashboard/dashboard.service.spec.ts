@@ -480,7 +480,7 @@ describe('DashboardService', () => {
       href: '/statements/submit?categoryId=uncategorized',
     });
     expect(result.find((item: any) => item.type === 'receipts_pending_review')).toMatchObject({
-      href: '/statements/submit',
+      href: '/statements/submit?status=needs_review',
     });
   });
 
