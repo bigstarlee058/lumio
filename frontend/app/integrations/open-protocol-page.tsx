@@ -49,6 +49,11 @@ export type ConfigField = {
   type?: 'text' | 'password' | 'number' | 'checkbox';
   placeholder?: string;
   required?: boolean;
+  browseAction?: {
+    label: string;
+    endpoint: string;
+    dependsOn: string[];
+  };
 };
 
 export function ProtocolIntegrationPage({
@@ -75,6 +80,8 @@ export function ProtocolIntegrationPage({
   const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [form, setForm] = useState<Record<string, string | number | boolean>>({});
   const [saving, setSaving] = useState(false);
+  const [browseOptions, setBrowseOptions] = useState<Record<string, string[]>>({});
+  const [browsing, setBrowsing] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -160,6 +167,22 @@ export function ProtocolIntegrationPage({
       setActionMessage(`Imported ${file.name}`);
     } catch {
       setActionMessage(`Unable to import ${file.name}`);
+    }
+  };
+
+  const browseField = async (field: ConfigField): Promise<void> => {
+    if (!field.browseAction) return;
+    setBrowsing(field.name);
+    try {
+      const body = Object.fromEntries(
+        field.browseAction.dependsOn.map(key => [key, form[key]]),
+      );
+      const response = await apiClient.post<string[]>(field.browseAction.endpoint, body);
+      setBrowseOptions(prev => ({ ...prev, [field.name]: response.data }));
+    } catch {
+      setActionMessage('Could not load options. Check the credentials above.');
+    } finally {
+      setBrowsing(null);
     }
   };
 
@@ -302,6 +325,40 @@ export function ProtocolIntegrationPage({
                           setForm(prev => ({ ...prev, [field.name]: event.target.checked }))
                         }
                       />
+                    </Box>
+                  ) : field.browseAction ? (
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      {browseOptions[field.name]?.length ? (
+                        <select
+                          value={String(form[field.name] ?? '')}
+                          onChange={event =>
+                            setForm(prev => ({ ...prev, [field.name]: event.target.value }))
+                          }
+                          style={{ ...inputStyle(c), flex: 1 }}
+                        >
+                          {browseOptions[field.name].map(opt => (
+                            <option key={opt} value={opt}>{opt}</option>
+                          ))}
+                        </select>
+                      ) : (
+                        <input
+                          type="text"
+                          value={String(form[field.name] ?? '')}
+                          placeholder={field.placeholder}
+                          onChange={event =>
+                            setForm(prev => ({ ...prev, [field.name]: event.target.value }))
+                          }
+                          style={{ ...inputStyle(c), flex: 1 }}
+                        />
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => void browseField(field)}
+                        disabled={browsing === field.name}
+                        style={buttonStyle(c.ink800, c.surface, c.ink150)}
+                      >
+                        {browsing === field.name ? '...' : field.browseAction.label}
+                      </button>
                     </Box>
                   ) : (
                     <input

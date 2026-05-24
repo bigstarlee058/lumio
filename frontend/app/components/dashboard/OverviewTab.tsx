@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, complexity, max-lines, max-lines-per-function */
 'use client';
 
-import { BudgetSummaryWidget } from '@/app/(main)/dashboard/components/BudgetSummaryWidget';
 import {
   AlertTriangle,
   ArrowRight,

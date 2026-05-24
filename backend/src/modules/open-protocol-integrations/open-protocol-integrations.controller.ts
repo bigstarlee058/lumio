@@ -25,6 +25,7 @@ export class OpenProtocolIntegrationsController {
       accessKeyId: this.stringValue(body.accessKeyId),
       secretAccessKey: this.stringValue(body.secretAccessKey),
       forcePathStyle: this.booleanValue(body.forcePathStyle),
+      autoBackup: this.booleanValue(body.autoBackup),
     });
   }
 
@@ -97,6 +98,17 @@ export class OpenProtocolIntegrationsController {
       mailbox: this.stringValue(body.mailbox),
       user: this.stringValue(body.user),
       pass: this.stringValue(body.pass),
+    });
+  }
+
+  @Post('imap/folders')
+  listImapFolders(@Body() body: Record<string, unknown>) {
+    return this.openProtocolIntegrationsService.listImapFolders({
+      host: this.stringValue(body.host) ?? '',
+      port: this.numberValue(body.port) ?? 993,
+      secure: this.booleanValue(body.secure) ?? true,
+      user: this.stringValue(body.user) ?? '',
+      pass: this.stringValue(body.pass) ?? '',
     });
   }
 

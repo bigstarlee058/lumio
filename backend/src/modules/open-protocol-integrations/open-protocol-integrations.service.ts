@@ -70,6 +70,7 @@ type S3Config = {
   accessKeyId?: string;
   secretAccessKey?: string;
   forcePathStyle: boolean;
+  autoBackup: boolean;
 };
 
 type WebdavConfig = {
@@ -96,6 +97,7 @@ type S3SettingsInput = {
   accessKeyId?: string;
   secretAccessKey?: string;
   forcePathStyle?: boolean;
+  autoBackup?: boolean;
 };
 
 type WebdavSettingsInput = {
@@ -250,6 +252,30 @@ export class OpenProtocolIntegrationsService {
     return this.imapStatus(user);
   }
 
+  async listImapFolders(input: {
+    host: string;
+    port: number;
+    secure: boolean;
+    user: string;
+    pass: string;
+  }): Promise<string[]> {
+    const client = new ImapFlow({
+      host: input.host,
+      port: input.port,
+      secure: input.secure,
+      auth: { user: input.user, pass: input.pass },
+      tls: { rejectUnauthorized: false },
+      logger: false,
+    });
+    await client.connect();
+    try {
+      const list = await client.list();
+      return list.map((m: { path: string }) => m.path);
+    } finally {
+      await client.logout().catch(() => undefined);
+    }
+  }
+
   async disconnect(user: User, provider: IntegrationProvider): Promise<{ ok: true }> {
     const { integration } = await this.findProtocolIntegration(user, provider);
     if (integration) {
@@ -342,6 +368,37 @@ export class OpenProtocolIntegrationsService {
     return { ok: true, uploaded };
   }
 
+  async autoBackupStatementToS3(workspaceId: string, statementId: string): Promise<void> {
+    const integration = await this.integrationRepository.findOne({
+      where: { workspaceId, provider: IntegrationProvider.S3_COMPATIBLE },
+      relations: ['openProtocolSettings'],
+    });
+    if (!integration?.openProtocolSettings) {
+      return;
+    }
+    const config = this.getS3ConfigFromSettings(integration.openProtocolSettings);
+    if (!config.autoBackup) {
+      return;
+    }
+    const statement = await this.statementRepository.findOne({ where: { id: statementId } });
+    if (!statement) {
+      return;
+    }
+    const { client } = this.createS3ClientFromConfig(config);
+    const file = await this.fileStorageService.getStatementFileStream(statement);
+    const buffer = await this.streamToBuffer(file.stream);
+    const key = this.joinRemotePath(config.prefix, file.fileName);
+    await client.send(
+      new PutObjectCommand({
+        Bucket: config.bucket,
+        Key: key,
+        Body: buffer,
+        ContentType: file.mimeType,
+        ContentDisposition: buildContentDisposition('attachment', file.fileName),
+      }),
+    );
+  }
+
   async listWebdavFiles(user: User): Promise<{ files: ProtocolFile[] }> {
     const { client, config } = await this.createWebdavClient(user);
     const contents = await client.getDirectoryContents(config.rootPath);
@@ -421,6 +478,7 @@ export class OpenProtocolIntegrationsService {
         user: config.user,
         pass: config.pass,
       },
+      tls: { rejectUnauthorized: false },
       logger: false,
     });
 
@@ -430,30 +488,37 @@ export class OpenProtocolIntegrationsService {
     try {
       await client.connect();
       await client.mailboxOpen(config.mailbox);
-      const searchResult = await client.search({ seen: false });
+      const searchResult = await client.search({});
       const uids = Array.isArray(searchResult) ? searchResult : [];
       const limitedUids = uids.slice(0, Number(process.env.IMAP_SYNC_LIMIT ?? 50));
 
       for (const uid of limitedUids) {
         scanned += 1;
-        const message = await client.fetchOne(
-          uid,
-          { source: true, envelope: true, flags: true },
-          { uid: true },
-        );
-        if (!message) {
-          continue;
-        }
-        const source = message.source;
-        if (!source) {
-          continue;
-        }
+        try {
+          const message = await client.fetchOne(
+            uid,
+            { source: true, envelope: true, flags: true },
+            { uid: true },
+          );
+          if (!message) {
+            continue;
+          }
+          const source = message.source;
+          if (!source) {
+            continue;
+          }
 
-        const parsed = await simpleParser(source);
-        const receiptId = await this.importImapMessage(user, uid, parsed, config);
-        if (receiptId) {
-          imported += 1;
-          await client.messageFlagsAdd(uid, ['\\Seen'], { uid: true });
+          const parsed = await simpleParser(source);
+          const receiptId = await this.importImapMessage(user, uid, parsed, config);
+          if (receiptId) {
+            imported += 1;
+            await client.messageFlagsAdd(uid, ['\\Seen'], { uid: true });
+          }
+        } catch (msgError) {
+          const e = msgError as Record<string, unknown>;
+          this.logger.warn(
+            `IMAP: failed to process uid ${uid}: ${String(e['message'])} | responseStatus: ${String(e['responseStatus'])} | response: ${JSON.stringify(e['response'])}`,
+          );
         }
       }
     } finally {
@@ -633,23 +698,23 @@ export class OpenProtocolIntegrationsService {
     };
   }
 
-  private async createS3Client(user: User): Promise<{ client: S3Client; config: S3Config }> {
-    const config = await this.getS3Config(user);
+  private createS3ClientFromConfig(config: S3Config): { client: S3Client } {
     return {
-      config,
       client: new S3Client({
         endpoint: config.endpoint,
         region: config.region,
         forcePathStyle: config.forcePathStyle,
         credentials:
           config.accessKeyId && config.secretAccessKey
-            ? {
-                accessKeyId: config.accessKeyId,
-                secretAccessKey: config.secretAccessKey,
-              }
+            ? { accessKeyId: config.accessKeyId, secretAccessKey: config.secretAccessKey }
             : undefined,
       }),
     };
+  }
+
+  private async createS3Client(user: User): Promise<{ client: S3Client; config: S3Config }> {
+    const config = await this.getS3Config(user);
+    return { config, ...this.createS3ClientFromConfig(config) };
   }
 
   private async getS3Config(user: User): Promise<S3Config> {
@@ -705,6 +770,7 @@ export class OpenProtocolIntegrationsService {
       accessKeyId: secrets.accessKeyId ? decryptText(secrets.accessKeyId) : undefined,
       secretAccessKey: secrets.secretAccessKey ? decryptText(secrets.secretAccessKey) : undefined,
       forcePathStyle: config.forcePathStyle !== false,
+      autoBackup: config.autoBackup === true,
     };
   }
 
@@ -886,6 +952,7 @@ export class OpenProtocolIntegrationsService {
       accessKeyId: input.accessKeyId?.trim() || current?.accessKeyId,
       secretAccessKey: input.secretAccessKey?.trim() || current?.secretAccessKey,
       forcePathStyle: input.forcePathStyle ?? current?.forcePathStyle ?? true,
+      autoBackup: input.autoBackup ?? current?.autoBackup ?? false,
     };
   }
 
@@ -896,6 +963,7 @@ export class OpenProtocolIntegrationsService {
       bucket: config.bucket,
       prefix: config.prefix,
       forcePathStyle: config.forcePathStyle,
+      autoBackup: config.autoBackup,
     };
   }
 
@@ -1000,6 +1068,7 @@ export class OpenProtocolIntegrationsService {
         user: config.user,
         pass: config.pass,
       },
+      tls: { rejectUnauthorized: false },
       logger: false,
     });
     try {

@@ -15,7 +15,16 @@ export default function ImapIntegrationPage(): React.JSX.Element {
       fields={[
         { name: 'host', label: 'Host', placeholder: 'imap.example.com', required: true },
         { name: 'port', label: 'Port', type: 'number', placeholder: '993' },
-        { name: 'mailbox', label: 'Mailbox', placeholder: 'INBOX' },
+        {
+          name: 'mailbox',
+          label: 'Mailbox',
+          placeholder: 'INBOX',
+          browseAction: {
+            label: 'Browse folders',
+            endpoint: '/integrations/imap/folders',
+            dependsOn: ['host', 'port', 'secure', 'user', 'pass'],
+          },
+        },
         { name: 'user', label: 'Username', required: true },
         { name: 'pass', label: 'Password', type: 'password', required: true },
         { name: 'secure', label: 'Use TLS', type: 'checkbox' },

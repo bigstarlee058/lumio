@@ -27,6 +27,7 @@ export default function S3CompatibleIntegrationPage(): React.JSX.Element {
         { name: 'accessKeyId', label: 'Access key ID', type: 'password' },
         { name: 'secretAccessKey', label: 'Secret access key', type: 'password' },
         { name: 'forcePathStyle', label: 'Force path-style URLs', type: 'checkbox' },
+        { name: 'autoBackup', label: 'Auto-backup on upload', type: 'checkbox' },
       ]}
       workflow="Fill in the bucket connection fields and connect. Lumio validates access before enabling browse, import, and sync."
     />

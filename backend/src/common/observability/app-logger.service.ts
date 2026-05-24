@@ -83,8 +83,14 @@ export class AppLogger implements LoggerService {
       context,
     };
 
-    const payload: Record<string, unknown> =
-      message && typeof message === 'object' ? { ...base, ...message } : { ...base, message };
+    let payload: Record<string, unknown>;
+    if (message instanceof Error) {
+      payload = { ...base, message: message.message, stack: message.stack };
+    } else if (message && typeof message === 'object') {
+      payload = { ...base, ...message };
+    } else {
+      payload = { ...base, message };
+    }
 
     if (trace) {
       payload.trace = trace;
