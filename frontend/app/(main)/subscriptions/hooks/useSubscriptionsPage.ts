@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import apiClient from '@/app/lib/api';
+import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 
 export interface SubscriptionItem {
   id: string;
@@ -34,16 +35,21 @@ export interface SubscriptionFormData {
   nextChargeDate: string;
 }
 
-const EMPTY_FORM: SubscriptionFormData = {
+const DEFAULT_CURRENCY = 'USD';
+
+const makeEmptyForm = (currency: string): SubscriptionFormData => ({
   vendorName: '',
   amount: '',
   frequency: 'monthly',
-  currency: 'KZT',
+  currency,
   categoryId: '',
   nextChargeDate: '',
-};
+});
 
 export function useSubscriptionsPage() {
+  const { currentWorkspace } = useWorkspace();
+  const workspaceCurrency = currentWorkspace?.currency ?? DEFAULT_CURRENCY;
+
   const [subscriptions, setSubscriptions] = useState<SubscriptionItem[]>([]);
   const [summary, setSummary] = useState<SubscriptionSummary>({ totalMonthlyCost: 0, activeCount: 0, upcomingCount: 0 });
   const [loading, setLoading] = useState(true);
@@ -51,7 +57,7 @@ export function useSubscriptionsPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingSubscription, setEditingSubscription] = useState<SubscriptionItem | null>(null);
-  const [formData, setFormData] = useState<SubscriptionFormData>(EMPTY_FORM);
+  const [formData, setFormData] = useState<SubscriptionFormData>(() => makeEmptyForm(workspaceCurrency));
   const [saving, setSaving] = useState(false);
 
   const load = useCallback(async () => {
@@ -78,9 +84,9 @@ export function useSubscriptionsPage() {
 
   const openCreate = useCallback(() => {
     setEditingSubscription(null);
-    setFormData(EMPTY_FORM);
+    setFormData(makeEmptyForm(workspaceCurrency));
     setDialogOpen(true);
-  }, []);
+  }, [workspaceCurrency]);
 
   const openEdit = useCallback((sub: SubscriptionItem) => {
     setEditingSubscription(sub);
@@ -108,7 +114,7 @@ export function useSubscriptionsPage() {
         vendorName: formData.vendorName,
         amount: Number(formData.amount),
         frequency: formData.frequency,
-        currency: formData.currency || 'KZT',
+        currency: formData.currency || workspaceCurrency,
         categoryId: formData.categoryId || undefined,
         nextChargeDate: formData.nextChargeDate || undefined,
       };
@@ -161,6 +167,7 @@ export function useSubscriptionsPage() {
   return {
     subscriptions,
     summary,
+    workspaceCurrency,
     loading,
     error,
     statusFilter,

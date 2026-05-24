@@ -33,7 +33,7 @@ export class SubscriptionsService {
       vendorName: dto.vendorName,
       amount: dto.amount,
       frequency: dto.frequency,
-      currency: dto.currency ?? 'KZT',
+      currency: dto.currency ?? 'USD',
       categoryId: dto.categoryId ?? null,
       nextChargeDate: dto.nextChargeDate ? new Date(dto.nextChargeDate) : null,
       status: SubscriptionStatus.ACTIVE,

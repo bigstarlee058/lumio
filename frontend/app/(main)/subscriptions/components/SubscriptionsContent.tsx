@@ -22,6 +22,7 @@ import { SubscriptionFormDrawer } from './SubscriptionFormDrawer';
 interface SubscriptionsContentProps {
   subscriptions: SubscriptionItem[];
   summary: SubscriptionSummary;
+  workspaceCurrency: string;
   loading: boolean;
   error: string | null;
   statusFilter: string;
@@ -44,6 +45,7 @@ export function SubscriptionsContent(props: SubscriptionsContentProps) {
   const {
     subscriptions,
     summary,
+    workspaceCurrency,
     loading,
     error,
     statusFilter,
@@ -91,7 +93,7 @@ export function SubscriptionsContent(props: SubscriptionsContentProps) {
               Monthly cost
             </Typography>
             <Typography variant="h6" fontWeight={600}>
-              {formatAmount(summary.totalMonthlyCost, 'KZT')}
+              {formatAmount(summary.totalMonthlyCost, workspaceCurrency)}
             </Typography>
           </CardContent>
         </Card>

@@ -39,6 +39,7 @@ export class SubscriptionDetectionService {
         't.amount',
         't.transactionDate',
         't.categoryId',
+        't.currency',
       ])
       .where('t.workspace_id = :workspaceId', { workspaceId })
       .andWhere('t.transaction_type = :type', { type: TransactionType.EXPENSE })
@@ -154,7 +155,7 @@ export class SubscriptionDetectionService {
       vendorName: txs[0].vendorNormalized ?? txs[0].counterpartyName,
       vendorRaw: txs[0].counterpartyName,
       amount: Math.round(avgAmount * 100) / 100,
-      currency: 'KZT',
+      currency: txs[0].currency ?? 'USD',
       frequency,
       confidence,
       lastChargeDate: lastDate,

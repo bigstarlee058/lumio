@@ -107,7 +107,7 @@ export function SubscriptionFormDrawer({
   onSave,
   onClose,
 }: SubscriptionFormDrawerProps): React.JSX.Element {
-  const currencyPicker = useCurrencyPickerState(formData.currency || 'KZT');
+  const currencyPicker = useCurrencyPickerState(formData.currency || 'USD');
   const {
     currencyDrawerOpen,
     setCurrencyDrawerOpen,
