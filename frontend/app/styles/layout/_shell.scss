@@ -384,6 +384,32 @@
   @include dark { border-top-color: $lumio-color-border-dk; }
 }
 
+.lumio-sidebar__support-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: $lumio-radius-md;
+  border: 1px solid rgba(5, 150, 105, 0.25);
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.12) 0%, rgba(8, 145, 178, 0.12) 100%);
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+
+  &:hover {
+    border-color: rgba(5, 150, 105, 0.45);
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.22) 0%, rgba(8, 145, 178, 0.22) 100%);
+  }
+}
+
+.lumio-sidebar__support-icon {
+  font-size: 16px;
+}
+
 .lumio-sidebar__storage {
   padding: 10px;
   border-radius: $lumio-radius-md;

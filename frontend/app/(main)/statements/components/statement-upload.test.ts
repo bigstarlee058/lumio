@@ -4,6 +4,7 @@ import {
   extractUploadErrorMessage,
   uploadReceiptScanFiles,
   uploadScanDrawerFiles,
+  uploadStatementFiles,
 } from './statement-upload';
 
 const apiMocks = vi.hoisted(() => ({
@@ -88,6 +89,57 @@ describe('statement-upload helpers', () => {
     expect(apiMocks.post).toHaveBeenCalledTimes(1);
     expect(apiMocks.post).toHaveBeenCalledWith(
       '/statements/upload-receipt',
+      expect.any(FormData),
+      expect.objectContaining({
+        headers: { 'Content-Type': 'multipart/form-data' },
+      }),
+    );
+  });
+
+  it('splits receipt scan batches into backend-sized upload requests', async () => {
+    const onUploadSuccess = vi.fn();
+    const refreshAfterCreate = vi.fn().mockResolvedValue(undefined);
+    const files = Array.from(
+      { length: 7 },
+      (_, index) => new File([`receipt-${index}`], `receipt-${index}.jpg`, { type: 'image/jpeg' }),
+    );
+
+    apiMocks.post.mockResolvedValue({ data: {} });
+
+    await uploadReceiptScanFiles({
+      files,
+      labels,
+      onUploadSuccess,
+      refreshAfterCreate,
+    });
+
+    expect(apiMocks.post).toHaveBeenCalledTimes(2);
+
+    const firstBatch = apiMocks.post.mock.calls[0]?.[1] as FormData;
+    const secondBatch = apiMocks.post.mock.calls[1]?.[1] as FormData;
+
+    expect(firstBatch.getAll('files')).toHaveLength(5);
+    expect(secondBatch.getAll('files')).toHaveLength(2);
+    expect(onUploadSuccess).toHaveBeenCalledTimes(1);
+    expect(refreshAfterCreate).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps statement uploads on the statement endpoint without receipt chunking', async () => {
+    const onUploadSuccess = vi.fn();
+    const refreshAfterCreate = vi.fn().mockResolvedValue(undefined);
+    apiMocks.post.mockResolvedValue({ data: {} });
+
+    await uploadStatementFiles({
+      files: [new File(['statement'], 'statement.pdf', { type: 'application/pdf' })],
+      allowDuplicates: true,
+      labels,
+      onUploadSuccess,
+      refreshAfterCreate,
+    });
+
+    expect(apiMocks.post).toHaveBeenCalledTimes(1);
+    expect(apiMocks.post).toHaveBeenCalledWith(
+      '/statements/upload',
       expect.any(FormData),
       expect.objectContaining({
         headers: { 'Content-Type': 'multipart/form-data' },

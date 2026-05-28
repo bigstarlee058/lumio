@@ -51,6 +51,29 @@ type Props = {
   }) => Promise<void>;
 };
 
+function ReceiptProcessingSkeleton({ fileCount }: { fileCount: number }) {
+  const receiptLabel = fileCount === 1 ? 'receipt' : 'receipts';
+
+  return (
+    <div
+      className="lumio-expense-drawer__processing"
+      data-testid="receipt-upload-processing-skeleton"
+      role="status"
+      aria-live="polite"
+    >
+      <div className="lumio-expense-drawer__processing-header">
+        <span>Processing {fileCount} {receiptLabel}</span>
+        <span className="lumio-expense-drawer__processing-dot" />
+      </div>
+      <div className="lumio-expense-drawer__processing-lines" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+      </div>
+    </div>
+  );
+}
+
 export default function CreateExpenseDrawer({
   open,
   initialMode,
@@ -554,6 +577,10 @@ export default function CreateExpenseDrawer({
               </div>
             ) : null}
 
+            {submitting && mode === 'scan' && !currencyPickerOpen ? (
+              <ReceiptProcessingSkeleton fileCount={files.length} />
+            ) : null}
+
             {error ? (
               <div style={{ borderRadius: tokens.radius.sm, border: '1px solid #fecaca', background: 'var(--color-error-soft-bg)', padding: '8px 12px', fontSize: 14, color: 'var(--destructive)' }}>
                 {error}
@@ -582,7 +609,9 @@ export default function CreateExpenseDrawer({
               }
             >
               {submitting
-                ? 'Saving...'
+                ? mode === 'scan'
+                  ? 'Processing...'
+                  : 'Saving...'
                 : mode === 'scan'
                   ? 'Upload receipt'
                   : manualStep === 'amount'

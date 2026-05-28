@@ -8,7 +8,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { buildNavItems, isNavItemActive } from './navigation/helpers/navigation-config';
-import { tokens } from '@/lib/theme-tokens';
 
 function WorkspaceSwitcher() {
   const { currentWorkspace, workspaces, switchWorkspace } = useWorkspace();
@@ -131,32 +130,9 @@ export function SidebarContent({ onNavClick }: SidebarProps) {
           href="https://github.com/sponsors/symonbaikov"
           target="_blank"
           rel="noopener noreferrer"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            width: '100%',
-            padding: '10px 14px',
-            borderRadius: tokens.radius.md,
-            background: 'linear-gradient(135deg, rgba(5,150,105,0.12) 0%, rgba(8,145,178,0.12) 100%)',
-            border: '1px solid rgba(5,150,105,0.25)',
-            color: 'var(--primary)',
-            fontSize: 13,
-            fontWeight: 600,
-            textDecoration: 'none',
-            cursor: 'pointer',
-            transition: 'background 0.2s, border-color 0.2s',
-          }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLAnchorElement).style.background = 'linear-gradient(135deg, rgba(5,150,105,0.22) 0%, rgba(8,145,178,0.22) 100%)';
-            (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(5,150,105,0.45)';
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLAnchorElement).style.background = 'linear-gradient(135deg, rgba(5,150,105,0.12) 0%, rgba(8,145,178,0.12) 100%)';
-            (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(5,150,105,0.25)';
-          }}
+          className="lumio-sidebar__support-link"
         >
-          <span style={{ fontSize: 16 }}>💚</span>
+          <span className="lumio-sidebar__support-icon">💚</span>
           {(supportProject as { value?: string })?.value ?? 'Support the project'}
         </a>
       </div>

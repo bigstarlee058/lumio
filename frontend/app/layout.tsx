@@ -67,7 +67,7 @@ export default async function RootLayout({
 
   return (
     <html lang={resolvedLocale} dir={direction} suppressHydrationWarning>
-      <body className={FONT_CLASS_NAMES} style={BODY_STYLE}>
+      <body className={FONT_CLASS_NAMES} style={BODY_STYLE} suppressHydrationWarning>
         <IntlayerServerProvider>
           <ThemeProvider
             attribute="class"

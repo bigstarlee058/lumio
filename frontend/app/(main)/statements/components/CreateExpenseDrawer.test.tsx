@@ -11,6 +11,10 @@ vi.mock('@/app/hooks/useIsMobile', () => ({
   useIsMobile: () => isMobileMock(),
 }));
 
+vi.mock('@mui/x-date-pickers/DatePicker', () => ({
+  DatePicker: () => <input aria-label="Date" readOnly />,
+}));
+
 describe('CreateExpenseDrawer mobile uploads', () => {
   beforeEach(() => {
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -115,9 +119,7 @@ describe('CreateExpenseDrawer mobile uploads', () => {
       );
     });
 
-    const drawerSurface = Array.from(document.querySelectorAll('[class]')).find(
-      node => typeof node.className === 'string' && node.className.includes('bg-card'),
-    );
+    const drawerSurface = document.querySelector('.lumio-expense-drawer');
     const lightSurface = Array.from(document.querySelectorAll('[class]')).find(
       node =>
         typeof node.className === 'string' &&
@@ -166,6 +168,59 @@ describe('CreateExpenseDrawer mobile uploads', () => {
     expect(fileInputs[0]?.getAttribute('capture')).toBe('environment');
     expect(fileInputs[0]?.getAttribute('accept')).toBe('image/*');
     expect(fileInputs[1]?.getAttribute('accept')).toContain('image/*');
+
+    await act(async () => {
+      root.unmount();
+    });
+  });
+
+  it('shows a processing skeleton while scan uploads are being submitted', async () => {
+    let finishUpload: (() => void) | undefined;
+    const onSubmitScan = vi.fn(
+      () =>
+        new Promise<void>(resolve => {
+          finishUpload = resolve;
+        }),
+    );
+    const container = document.createElement('div');
+    document.body.innerHTML = '';
+    document.body.appendChild(container);
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(
+        <CreateExpenseDrawer
+          open
+          initialMode="scan"
+          categories={[]}
+          taxRates={[]}
+          onClose={() => undefined}
+          onSubmitScan={onSubmitScan}
+          onSubmitManual={async () => undefined}
+        />,
+      );
+    });
+
+    const files = [
+      new File(['first'], 'first.jpg', { type: 'image/jpeg' }),
+      new File(['second'], 'second.jpg', { type: 'image/jpeg' }),
+    ];
+    const uploadInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+
+    await act(async () => {
+      fireEvent.change(uploadInput, { target: { files } });
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /upload receipt/i }));
+    });
+
+    expect(screen.getByTestId('receipt-upload-processing-skeleton')).toBeInTheDocument();
+    expect(screen.getByText(/processing 2 receipts/i)).toBeInTheDocument();
+
+    await act(async () => {
+      finishUpload?.();
+    });
 
     await act(async () => {
       root.unmount();

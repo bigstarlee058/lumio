@@ -2,6 +2,8 @@
 
 import apiClient from '@/app/lib/api';
 
+export const RECEIPT_SCAN_UPLOAD_BATCH_SIZE = 5;
+
 export type StatementUploadLabels = {
   pickAtLeastOne: string;
   uploadedProcessing: string;
@@ -34,6 +36,16 @@ type UploadScanDrawerFilesParams = UploadCallbacks & {
   };
 };
 
+const chunkFiles = (files: File[], size: number): File[][] => {
+  const chunks: File[][] = [];
+
+  for (let index = 0; index < files.length; index += size) {
+    chunks.push(files.slice(index, index + size));
+  }
+
+  return chunks;
+};
+
 // eslint-disable-next-line complexity
 export const extractUploadErrorMessage = (error: unknown, fallback: string): string => {
   const responseMessage = (error as { response?: { data?: { message?: unknown } } })?.response?.data
@@ -64,9 +76,9 @@ export const uploadStatementFiles = async ({
   }
 
   const formData = new FormData();
-  files.forEach(file => {
+  for (const file of files) {
     formData.append('files', file);
-  });
+  }
   formData.append('allowDuplicates', allowDuplicates ? 'true' : 'false');
   formData.append(
     'requireManualCategorySelection',
@@ -96,15 +108,17 @@ export const uploadReceiptScanFiles = async ({
     throw new Error(labels.pickAtLeastOne);
   }
 
-  const formData = new FormData();
-  files.forEach(file => {
-    formData.append('files', file);
-  });
-
   try {
-    await apiClient.post('/statements/upload-receipt', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    for (const batch of chunkFiles(files, RECEIPT_SCAN_UPLOAD_BATCH_SIZE)) {
+      const formData = new FormData();
+      for (const file of batch) {
+        formData.append('files', file);
+      }
+
+      await apiClient.post('/statements/upload-receipt', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    }
 
     onUploadSuccess(labels.uploadedProcessing);
     await refreshAfterCreate();
