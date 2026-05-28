@@ -26,6 +26,10 @@ vi.mock('@mui/material', () => ({
 }));
 
 vi.mock('@/app/components/icons', () => ({
+  CheckCircle2: () => <span data-testid="check-circle-icon" />,
+  CircleAlert: () => <span data-testid="circle-alert-icon" />,
+  ExternalLink: () => <span data-testid="external-link-icon" />,
+  ListChecks: () => <span data-testid="list-checks-icon" />,
   RefreshCcw: () => <span data-testid="refresh-icon" />,
 }));
 
@@ -144,19 +148,19 @@ describe('DashboardPage', () => {
     expect(screen.getByTestId('export-dropdown')).toHaveTextContent('Export');
   });
 
-  it('links New Record to statements with the scan drawer open', () => {
+  it('links Upload statement to statements with the scan drawer open', () => {
     render(<DashboardPage />);
 
-    const link = screen.getByRole('link', { name: /new record/i });
+    const link = screen.getByRole('link', { name: /upload statement/i });
 
     expect(link.getAttribute('href')).toBe('/statements?openExpenseDrawer=scan');
   });
 
-  it('renders the New Record action with rounded corners', () => {
+  it('renders the Upload statement action with rounded corners', () => {
     render(<DashboardPage />);
 
-    const link = screen.getByRole('link', { name: /new record/i });
+    const link = screen.getByRole('link', { name: /upload statement/i });
 
-    expect(link.className).toContain('rounded-lg');
+    expect(link.getAttribute('style')).toContain('border-radius');
   });
 });

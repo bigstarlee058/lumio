@@ -20,7 +20,12 @@ import {
 } from '../helpers/dashboard-helpers';
 import { useDashboardRedirect } from './useDashboardRedirect';
 
-export type DashboardTabId = 'overview' | 'trends' | 'data-health';
+export type DashboardTabId = 'finance-ops' | 'overview' | 'trends' | 'data-health';
+
+type DashboardPageText = {
+  greeting?: Record<string, unknown> & { fallbackName?: unknown };
+  statusHeading?: Record<string, unknown>;
+};
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
 export function useDashboardPage() {
@@ -28,9 +33,10 @@ export function useDashboardPage() {
   const { currentWorkspace, loading: workspaceLoading } = useWorkspace();
   const { locale } = useLocale();
   const t = useIntlayer('dashboardPage');
+  const dashboardText = t as unknown as DashboardPageText;
   const isMobile = useIsMobile();
   const { data, loading, error, refresh, range } = useDashboard('30d');
-  const [activeTab, setActiveTab] = useState<DashboardTabId>('overview');
+  const [activeTab, setActiveTab] = useState<DashboardTabId>('finance-ops');
   const isRedirecting = useDashboardRedirect({
     user,
     authLoading,
@@ -65,9 +71,10 @@ export function useDashboardPage() {
       pendingReviewCount: data?.dataHealth?.statementsPendingReview ?? 0,
     });
     const greetingState = resolveGreetingState(greetingData);
-    const greetingName = user?.name ?? text(t.greeting?.fallbackName) ?? 'User';
+    const greetingName = user?.name ?? text(dashboardText.greeting?.fallbackName) ?? 'User';
     const count = String(data?.dataHealth?.statementsPendingReview ?? 0);
-    const subtitle = fillTemplate(text(t.greeting?.[greetingState]?.subtitle), {
+    const greetingCopy = dashboardText.greeting?.[greetingState] as { subtitle?: unknown } | undefined;
+    const subtitle = fillTemplate(text(greetingCopy?.subtitle), {
       name: greetingName,
       count,
       days: '14',
@@ -77,10 +84,10 @@ export function useDashboardPage() {
       error,
       loading,
     });
-    const heading = text(t.statusHeading?.[headingKey]) || statusHeadingFallback[headingKey];
+    const heading = text(dashboardText.statusHeading?.[headingKey]) || statusHeadingFallback[headingKey];
     const period = resolveDashboardEffectivePeriod(data?.effectiveSince, data?.effectiveEndDate);
     return { statusHeading: heading, greetingSubtitle: subtitle, effectivePeriod: period };
-  }, [data, error, loading, t, user?.name]);
+  }, [dashboardText.greeting, dashboardText.statusHeading, data, error, loading, user?.name]);
   return {
     data,
     loading,

@@ -18,6 +18,7 @@ export function DashboardTabs({ activeTab, onTabChange }: DashboardTabsProps): R
       scrollButtons={false}
       sx={sharedMuiTabsSx}
     >
+      <Tab value="finance-ops" label="Finance Ops" />
       <Tab value="overview" label="Overview" />
       <Tab value="trends" label="Trends" />
       <Tab value="data-health" label="Data Health" />

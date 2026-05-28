@@ -67,15 +67,12 @@ export function resolveGreetingState(params: {
 export function resolveDashboardGreetingData(params: {
   lastUploadDate: string | null;
   pendingReviewCount: number;
-}): { isEmptyWorkspace: boolean; isStaleImport: boolean } {
+}): { isEmptyWorkspace: boolean; pendingReviewCount: number; isStaleImport: boolean } {
   const { lastUploadDate, pendingReviewCount } = params;
   const isEmptyWorkspace = !lastUploadDate;
   const daysSinceUpload = lastUploadDate
     ? Math.floor((Date.now() - new Date(lastUploadDate).getTime()) / (1000 * 60 * 60 * 24))
     : null;
   const isStaleImport = !isEmptyWorkspace && daysSinceUpload !== null && daysSinceUpload >= 14;
-  return { isEmptyWorkspace, isStaleImport, pendingReviewCount } as {
-    isEmptyWorkspace: boolean;
-    isStaleImport: boolean;
-  };
+  return { isEmptyWorkspace, pendingReviewCount, isStaleImport };
 }
