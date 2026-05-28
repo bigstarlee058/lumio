@@ -1,6 +1,7 @@
 'use client';
 
 import { Spinner } from '@/app/components/ui/spinner';
+import { useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
 import { syncLocaleFromUser } from '@/app/lib/locale';
@@ -21,6 +22,7 @@ export function GoogleAuthButton({
   onError,
   errorFallback,
 }: GoogleAuthButtonProps) {
+  const { locale } = useLocale();
   const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
   const buttonRef = useRef<HTMLDivElement>(null);
   const [scriptLoaded, setScriptLoaded] = useState(false);
@@ -103,15 +105,18 @@ export function GoogleAuthButton({
       auto_select: false,
       cancel_on_tap_outside: true,
     });
-    google.accounts.id.renderButton(buttonRef.current, {
+    const buttonOptions = {
       theme: 'outline',
       size: 'large',
       shape: 'rectangular',
       text: 'continue_with',
       width: 320,
       logo_alignment: 'left',
-    });
-  }, [clientId, handleCredentialResponse, scriptLoaded]);
+      locale,
+    } as Parameters<typeof google.accounts.id.renderButton>[1] & { locale?: string };
+
+    google.accounts.id.renderButton(buttonRef.current, buttonOptions);
+  }, [clientId, handleCredentialResponse, locale, scriptLoaded]);
 
   useEffect(() => {
     renderGoogleButton();

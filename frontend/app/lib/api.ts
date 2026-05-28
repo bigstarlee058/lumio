@@ -86,6 +86,23 @@ async function refreshAccessToken(originalRequest: Record<string, unknown>): Pro
   return apiClient(originalRequest);
 }
 
+const AUTH_RETRY_EXCLUDED_PATHS = new Set([
+  '/auth/login',
+  '/auth/register',
+  '/auth/google',
+  '/auth/refresh',
+]);
+
+function isAuthRetryExcludedRequest(originalRequest: Record<string, unknown>): boolean {
+  const url = typeof originalRequest.url === 'string' ? originalRequest.url : '';
+
+  try {
+    return AUTH_RETRY_EXCLUDED_PATHS.has(new URL(url, apiBaseUrl).pathname.replace(/\/api\/v1/, ''));
+  } catch {
+    return AUTH_RETRY_EXCLUDED_PATHS.has(url.split('?')[0] ?? url);
+  }
+}
+
 function isForbiddenWorkspaceError(error: Record<string, unknown>): boolean {
   const response = error.response as { status?: number; data?: { message?: string } } | undefined;
   return (
@@ -100,7 +117,11 @@ function isUnauthorizedRetryable(
   originalRequest: Record<string, unknown>,
 ): boolean {
   const response = error.response as { status?: number } | undefined;
-  return response?.status === 401 && !originalRequest._retry;
+  return (
+    response?.status === 401 &&
+    !originalRequest._retry &&
+    !isAuthRetryExcludedRequest(originalRequest)
+  );
 }
 
 // Response interceptor for handling errors

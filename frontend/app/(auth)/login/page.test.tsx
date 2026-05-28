@@ -16,6 +16,7 @@ vi.mock('@/app/i18n', () => ({
   useIntlayer: () => ({
     subtitle: 'Log in to continue using Lumio',
     rightTagline: 'A platform for bank statement processing',
+    emailLabel: { value: 'Email localized' },
     passwordLabel: { value: 'Password' },
     submit: 'Log in',
     noAccount: "Don't have an account? Sign up",
@@ -43,13 +44,23 @@ describe('LoginPage locale persistence', () => {
   let container: HTMLDivElement;
   let root: ReturnType<typeof createRoot>;
   let locationHref = '';
+  const storage = new Map<string, string>();
 
   beforeEach(() => {
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
     container = document.createElement('div');
     document.body.appendChild(container);
     root = createRoot(container);
-    localStorage.clear();
+    storage.clear();
+    Object.defineProperty(globalThis, 'localStorage', {
+      configurable: true,
+      value: {
+        getItem: (key: string) => storage.get(key) ?? null,
+        setItem: (key: string, value: string) => storage.set(key, value),
+        removeItem: (key: string) => storage.delete(key),
+        clear: () => storage.clear(),
+      },
+    });
     document.cookie = 'INTLAYER_LOCALE=; Max-Age=0; path=/';
     document.cookie = 'intlayer-locale=; Max-Age=0; path=/';
     document.cookie = 'INTLAYER_LOCALE=en; path=/';
@@ -111,6 +122,7 @@ describe('LoginPage locale persistence', () => {
     expect(emailInput).toBeTruthy();
     expect(passwordInput).toBeTruthy();
     expect(submitButton).toBeTruthy();
+    expect(container.textContent).toContain('Email localized');
 
     if (!(emailInput && passwordInput && submitButton)) {
       throw new Error('Login form controls were not rendered');

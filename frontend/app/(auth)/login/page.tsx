@@ -193,7 +193,7 @@ function LoginPageContent(): React.JSX.Element {
           required
           fullWidth
           id="email"
-          label="Email"
+          label={t.emailLabel.value}
           name="email"
           autoComplete="email"
           autoFocus

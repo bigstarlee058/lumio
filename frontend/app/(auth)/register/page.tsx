@@ -17,6 +17,8 @@ import { useSearchParams } from 'next/navigation';
 import React, { Suspense, useEffect, useState } from 'react';
 import AuthLayout from '../AuthLayout';
 
+const MIN_PASSWORD_LENGTH = 8;
+
 // eslint-disable-next-line max-lines-per-function, complexity
 function RegisterPageContent(): React.JSX.Element {
   const searchParams = useSearchParams();
@@ -73,6 +75,12 @@ function RegisterPageContent(): React.JSX.Element {
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     setError('');
+
+    if (formData.password.length < MIN_PASSWORD_LENGTH) {
+      setError(t.passwordHelper.value);
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -215,7 +223,7 @@ function RegisterPageContent(): React.JSX.Element {
           required
           fullWidth
           id="email"
-          label="Email"
+          label={t.emailLabel.value}
           name="email"
           autoComplete="email"
           value={formData.email}
@@ -238,6 +246,7 @@ function RegisterPageContent(): React.JSX.Element {
           value={formData.password}
           onChange={handleChange}
           helperText={t.passwordHelper.value}
+          inputProps={{ minLength: MIN_PASSWORD_LENGTH }}
           InputProps={{
             sx: { borderRadius: 0 },
           }}

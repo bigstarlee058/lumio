@@ -6,6 +6,7 @@ import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { tokens } from '@/lib/theme-tokens';
 import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
+import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import CloudQueueOutlinedIcon from '@mui/icons-material/CloudQueueOutlined';
 import DnsOutlinedIcon from '@mui/icons-material/DnsOutlined';
 import ExtensionOutlinedIcon from '@mui/icons-material/ExtensionOutlined';
@@ -49,6 +50,19 @@ export default function IntegrationsPage(): React.JSX.Element {
             href: 'https://github.com/ollama/ollama/blob/main/docs/api.md',
             external: true,
           },
+        ],
+      },
+      {
+        key: 'local-categorization',
+        name: 'Local categorization',
+        description: 'Install a local Transformers.js model for private receipt categorization.',
+        badge: 'Local model',
+        category: 'ai',
+        recommended: true,
+        icon: <CategoryOutlinedIcon sx={{ fontSize: 32 }} aria-hidden="true" />,
+        statusPath: '/settings/local-categorization',
+        actions: [
+          { label: 'Configure', href: '/integrations/local-categorization', primary: true },
         ],
       },
       {

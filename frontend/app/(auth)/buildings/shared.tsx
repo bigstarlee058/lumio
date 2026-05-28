@@ -11,10 +11,14 @@ export interface BuildingProps {
   right?: string;
 }
 
-// Deterministic pseudo-random value in [0, 1) using seed
+// Deterministic pseudo-random value in [0, 1) using only integer operations.
 export const stableWindowNoise = (seed: number): number => {
-  const x = Math.sin(seed * 12.9898) * 43758.5453;
-  return x - Math.floor(x);
+  let value = seed | 0;
+  value = Math.imul(value ^ (value >>> 16), 0x7feb352d);
+  value = Math.imul(value ^ (value >>> 15), 0x846ca68b);
+  value ^= value >>> 16;
+
+  return (value >>> 0) / 0x100000000;
 };
 
 export const glassStyle: React.CSSProperties = {
@@ -29,7 +33,7 @@ type WindowGridProps = { cols?: number; rows?: number; density?: number };
 export function WindowGrid({
   cols = 3,
   rows = 5,
-  density = 0.4,
+  density: _density = 0.4,
 }: WindowGridProps): React.JSX.Element {
   const GRID_STYLE: React.CSSProperties = {
     width: '100%',
@@ -41,12 +45,17 @@ export function WindowGrid({
     padding: '12px',
     opacity: 0.3,
   };
+
   return (
     <div style={GRID_STYLE}>
-      {[...Array(cols * rows).keys()].map(i => {
-        const isLit = stableWindowNoise((cols + 11) * (rows + 7) * (i + 1)) < density;
-        return <div key={i} style={{ background: isLit ? 'white' : 'transparent' }} />;
-      })}
+      {[...Array(cols * rows).keys()].map(i => (
+        <div
+          key={i}
+          style={{
+            background: 'rgba(255, 255, 255, 0.28)',
+          }}
+        />
+      ))}
     </div>
   );
 }
