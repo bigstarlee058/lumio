@@ -61,3 +61,50 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 ---
 
 These guidelines are working if: fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+
+---
+
+## Project Context (Lumio)
+
+Monorepo:
+- `backend/` — NestJS 11 + TypeORM + Postgres + S3 + Tesseract OCR. Bank statement parsing & ledger.
+- `frontend/` — Next.js + MUI + intlayer (i18n) + Vitest + Storybook.
+- `electron/` — Desktop wrapper for the frontend.
+- `mcp-server/`, `observability/`, `policy/`, `website/` — supporting packages.
+- Detailed policy lives in `.claude/rules/*.md` (security, database, idempotency, api-standards, clean-architecture, frontend-perf, observability, best-practices). Read those before changes in those domains.
+
+## Quick Commands
+
+```bash
+# Dev (Docker, full stack)
+make quick-dev                    # one-shot dev bring-up
+make dev                          # docker compose dev with hot reload
+
+# Dev (local processes)
+npm run dev                       # concurrently runs backend + frontend
+npm run backend:dev               # NestJS with nodemon
+npm run frontend:dev              # Next.js dev server
+
+# Build / test / lint
+npm run build                     # frontend then backend
+npm test                          # backend unit + frontend vitest
+npm --prefix backend run test:e2e
+npm --prefix backend run test:golden   # parsing golden tests (GOLDEN_ENABLED=1)
+npm --prefix backend run lint:fix      # Biome only
+npm --prefix frontend run lint:fix     # Biome AND ESLint (both run)
+npm --prefix backend run typecheck
+npm --prefix frontend run type-check
+
+# Migrations (TypeORM)
+npm run migration:run                         # prod path: builds scripts, uses migration lock
+npm --prefix backend run migration:run:dev    # dev path: ts-node, no lock
+npm run migration:generate -- src/migrations/<Name>
+```
+
+## Gotchas
+
+- Frontend lint runs **both** Biome and ESLint — fixing one but not the other leaves CI red.
+- `prebuild` and `postinstall` on the frontend run `intlayer build`; deleting the intlayer config or skipping it breaks both install and build.
+- Backend dev uses a manual nodemon command, not `nest start`, and bumps Node heap to 2 GB.
+- Always run migrations via the npm scripts, not raw `typeorm` — `migration:run` acquires a lock to prevent concurrent runs in deployment.
+- Tenant isolation: every backend query must filter by `workspaceId`. See `.claude/rules/security.md`.
