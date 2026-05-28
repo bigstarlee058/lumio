@@ -1,14 +1,204 @@
 {
   "meta": {
     "lastProcessedCommitByBranch": {
-      "main": "7c664cab75f7ae7f9f5c2a5b5d0ff65b42d15b3a"
+      "main": "55819a6281e95ca3b82a8c0cb59ee0ba7c77d715"
     },
     "initializedAt": "2026-03-05T22:23:31.634Z",
-    "lastGeneratedAt": "2026-05-24T13:09:33.019Z",
+    "lastGeneratedAt": "2026-05-28T17:15:09.177Z",
     "minCommits": 5,
     "lastRecoveryAt": "2026-05-07T18:30:33.797Z"
   },
   "entries": [
+    {
+      "id": "changelog-2026-05-28-55819a6",
+      "version": "main-55819a6",
+      "branch": "main",
+      "date": "2026-05-28T17:15:09.177Z",
+      "title": "Release update - May 28, 2026",
+      "summary": "This release includes 3 features and 1 fix.",
+      "markdown": "## Features\n- **backend**: Add service settings and categorization\n- **auth**: Improve auth and categorization setup\n- **dashboard**: Add finance ops overview\n\n## Fixes\n- **statements**: Improve receipt upload feedback",
+      "commits": [
+        {
+          "sha": "7eedd7110ba069a48deaefab518ac56b2c7ca04f",
+          "shortSha": "7eedd711",
+          "subject": "chore(changelog): update generated changelog [skip ci]",
+          "author": "github-actions[bot]",
+          "date": "2026-05-24T13:09:33Z",
+          "files": [
+            "frontend/public/changelog.json"
+          ]
+        },
+        {
+          "sha": "4ff1493ce9588206a553e86a45f4bb7a893d6f1c",
+          "shortSha": "4ff1493c",
+          "subject": "chore(agent): add project skills and hooks",
+          "author": "Symon",
+          "date": "2026-05-28T20:11:30+03:00",
+          "files": [
+            ".agents/skills/brainstorm/SKILL.md",
+            ".agents/skills/executing-plans/SKILL.md",
+            ".agents/skills/styling-guide/SKILL.md",
+            ".agents/skills/subagent-driven-development/SKILL.md",
+            ".agents/skills/subagent-driven-development/code-quality-reviewer-prompt.md",
+            ".agents/skills/subagent-driven-development/implementer-prompt.md",
+            ".agents/skills/subagent-driven-development/spec-reviewer-prompt.md",
+            ".agents/skills/systematic-debugging/CREATION-LOG.md",
+            ".agents/skills/systematic-debugging/SKILL.md",
+            ".agents/skills/systematic-debugging/condition-based-waiting-example.ts",
+            ".agents/skills/systematic-debugging/condition-based-waiting.md",
+            ".agents/skills/systematic-debugging/defense-in-depth.md",
+            ".agents/skills/systematic-debugging/find-polluter.sh",
+            ".agents/skills/systematic-debugging/root-cause-tracing.md",
+            ".agents/skills/systematic-debugging/test-academic.md",
+            ".agents/skills/systematic-debugging/test-pressure-1.md",
+            ".agents/skills/systematic-debugging/test-pressure-2.md",
+            ".agents/skills/systematic-debugging/test-pressure-3.md",
+            ".agents/skills/test-driven-development/SKILL.md",
+            ".agents/skills/ui-ux-pro-max/SKILL.md",
+            ".agents/skills/ui-ux-pro-max/data/charts.csv",
+            ".agents/skills/ui-ux-pro-max/data/colors.csv",
+            ".agents/skills/ui-ux-pro-max/data/icons.csv",
+            ".agents/skills/ui-ux-pro-max/data/landing.csv",
+            ".agents/skills/ui-ux-pro-max/data/products.csv",
+            ".agents/skills/ui-ux-pro-max/data/react-performance.csv",
+            ".agents/skills/ui-ux-pro-max/data/stacks/astro.csv",
+            ".agents/skills/ui-ux-pro-max/data/stacks/flutter.csv",
+            ".agents/skills/ui-ux-pro-max/data/stacks/html-tailwind.csv",
+            ".agents/skills/ui-ux-pro-max/data/stacks/jetpack-compose.csv",
+            ".agents/skills/ui-ux-pro-max/data/stacks/nextjs.csv",
+            ".agents/skills/ui-ux-pro-max/data/stacks/nuxt-ui.csv",
+            ".agents/skills/ui-ux-pro-max/data/stacks/nuxtjs.csv",
+            ".agents/skills/ui-ux-pro-max/data/stacks/react-native.csv",
+            ".agents/skills/ui-ux-pro-max/data/stacks/react.csv",
+            ".agents/skills/ui-ux-pro-max/data/stacks/shadcn.csv",
+            ".agents/skills/ui-ux-pro-max/data/stacks/svelte.csv",
+            ".agents/skills/ui-ux-pro-max/data/stacks/swiftui.csv",
+            ".agents/skills/ui-ux-pro-max/data/stacks/vue.csv",
+            ".agents/skills/ui-ux-pro-max/data/styles.csv",
+            ".agents/skills/ui-ux-pro-max/data/typography.csv",
+            ".agents/skills/ui-ux-pro-max/data/ui-reasoning.csv",
+            ".agents/skills/ui-ux-pro-max/data/ux-guidelines.csv",
+            ".agents/skills/ui-ux-pro-max/data/web-interface.csv",
+            ".agents/skills/ui-ux-pro-max/scripts/__pycache__/core.cpython-313.pyc",
+            ".agents/skills/ui-ux-pro-max/scripts/__pycache__/core.cpython-314.pyc",
+            ".agents/skills/ui-ux-pro-max/scripts/__pycache__/design_system.cpython-313.pyc",
+            ".agents/skills/ui-ux-pro-max/scripts/__pycache__/design_system.cpython-314.pyc",
+            ".agents/skills/ui-ux-pro-max/scripts/__pycache__/search.cpython-314.pyc",
+            ".agents/skills/ui-ux-pro-max/scripts/core.py",
+            ".agents/skills/ui-ux-pro-max/scripts/design_system.py",
+            ".agents/skills/ui-ux-pro-max/scripts/search.py",
+            ".agents/skills/using-git-worktrees/SKILL.md",
+            ".agents/skills/using-superpowers/SKILL.md",
+            ".agents/skills/verification-before-completion/SKILL.md",
+            ".agents/skills/writing-plans/SKILL.md",
+            ".codex/hooks.json",
+            "CLAUDE.md"
+          ]
+        },
+        {
+          "sha": "3144fcefbdc6827a3af5423986ac74952c50edd6",
+          "shortSha": "3144fcef",
+          "subject": "feat(backend): add service settings and categorization",
+          "author": "Symon",
+          "date": "2026-05-28T20:11:44+03:00",
+          "files": [
+            "backend/@tests/unit/modules/application-settings/application-settings.service.spec.ts",
+            "backend/@tests/unit/modules/classification/transaction-categorizer.spec.ts",
+            "backend/@tests/unit/modules/parsing/services/bank-profile.service.spec.ts",
+            "backend/package-lock.json",
+            "backend/package.json",
+            "backend/src/entities/workspace-service-settings.entity.ts",
+            "backend/src/modules/application-settings/application-settings.controller.ts",
+            "backend/src/modules/application-settings/application-settings.service.ts",
+            "backend/src/modules/classification/helpers/transaction-categorizer.ts",
+            "backend/src/modules/parsing/services/bank-profile.service.ts"
+          ]
+        },
+        {
+          "sha": "aeb20066c604cd826b4d668ac6c1de3c5d722654",
+          "shortSha": "aeb20066",
+          "subject": "feat(auth): improve auth and categorization setup",
+          "author": "Symon",
+          "date": "2026-05-28T20:11:58+03:00",
+          "files": [
+            "frontend/app/(auth)/buildings/shared.test.tsx",
+            "frontend/app/(auth)/buildings/shared.tsx",
+            "frontend/app/(auth)/login/page.content.ts",
+            "frontend/app/(auth)/login/page.test.tsx",
+            "frontend/app/(auth)/login/page.tsx",
+            "frontend/app/(auth)/register/page.content.ts",
+            "frontend/app/(auth)/register/page.test.tsx",
+            "frontend/app/(auth)/register/page.tsx",
+            "frontend/app/components/GoogleAuthButton.test.tsx",
+            "frontend/app/components/GoogleAuthButton.tsx",
+            "frontend/app/integrations/local-categorization/page.test.tsx",
+            "frontend/app/integrations/local-categorization/page.tsx",
+            "frontend/app/integrations/page.tsx",
+            "frontend/app/lib/api.test.ts",
+            "frontend/app/lib/api.ts"
+          ]
+        },
+        {
+          "sha": "38636e9fb8392223351ca859acf513a3af30ab15",
+          "shortSha": "38636e9f",
+          "subject": "feat(dashboard): add finance ops overview",
+          "author": "Symon",
+          "date": "2026-05-28T20:12:10+03:00",
+          "files": [
+            "frontend/app/(main)/dashboard/components/DashboardTabContent.tsx",
+            "frontend/app/(main)/dashboard/components/DashboardTabs.tsx",
+            "frontend/app/(main)/dashboard/helpers/dashboard-helpers.ts",
+            "frontend/app/(main)/dashboard/hooks/useDashboardPage.ts",
+            "frontend/app/(main)/dashboard/page.test.tsx",
+            "frontend/app/components/dashboard/FinanceOpsTab.tsx",
+            "frontend/app/components/dashboard/finance-ops-model.test.ts",
+            "frontend/app/components/dashboard/finance-ops-model.ts"
+          ]
+        },
+        {
+          "sha": "6871e743a2adb4840ef76512a0594231eea4ece4",
+          "shortSha": "6871e743",
+          "subject": "fix(statements): improve receipt upload feedback",
+          "author": "Symon",
+          "date": "2026-05-28T20:12:21+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/CreateExpenseDrawer.test.tsx",
+            "frontend/app/(main)/statements/components/CreateExpenseDrawer.tsx",
+            "frontend/app/(main)/statements/components/statement-upload.test.ts",
+            "frontend/app/(main)/statements/components/statement-upload.ts",
+            "frontend/app/components/Sidebar.tsx",
+            "frontend/app/layout.tsx",
+            "frontend/app/styles/components/_statements.scss",
+            "frontend/app/styles/layout/_shell.scss",
+            "frontend/app/test/setup.ts"
+          ]
+        },
+        {
+          "sha": "d81d6942fd068ccd879997719dec51b291e5ae8d",
+          "shortSha": "d81d6942",
+          "subject": "chore(fixtures): add statement upload samples",
+          "author": "Symon",
+          "date": "2026-05-28T20:12:36+03:00",
+          "files": [
+            "backend/1779619838088-bd0456e42a1e48-statement.pdf",
+            "backend/1779622896760-761518176a18d8-statement.pdf",
+            "backend/1779622926531-ef433f293b465-statement.pdf",
+            "backend/1779622976743-15e9849d5e0db8-statement.pdf",
+            "backend/1779628124708-7ff631b33c4988-statement.pdf"
+          ]
+        },
+        {
+          "sha": "55819a6281e95ca3b82a8c0cb59ee0ba7c77d715",
+          "shortSha": "55819a62",
+          "subject": "chore(fixtures): add generated statement sample",
+          "author": "Symon",
+          "date": "2026-05-28T20:14:37+03:00",
+          "files": [
+            "backend/1779988419695-8d92c99c4b202-statement.pdf"
+          ]
+        }
+      ]
+    },
     {
       "id": "changelog-2026-05-24-7c664ca",
       "version": "main-7c664ca",
