@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'fs';
-import { join, resolve } from 'path';
+import { basename, extname, join, resolve } from 'path';
 import { Injectable, Logger } from '@nestjs/common';
+import * as yaml from 'js-yaml';
 import {
   createAmountFormat,
   createSharedProfileSections,
@@ -129,6 +130,39 @@ export interface BusinessRule {
   priority: number;
 }
 
+type LegacyColumnMapping = {
+  keywords?: string[];
+  position?: number;
+  required?: boolean;
+};
+
+type LegacyBankProfile = {
+  name?: string;
+  country?: string;
+  locale?: string;
+  patterns?: {
+    number?: {
+      currencySymbols?: string[];
+      decimalSeparator?: string;
+      thousandsSeparator?: string;
+    };
+  };
+  columns?: Record<string, LegacyColumnMapping>;
+  header?: {
+    patterns?: string[];
+    accountNumber?: { patterns?: string[] };
+    period?: { patterns?: string[] };
+    balance?: { patterns?: string[] };
+  };
+  fileDetection?: {
+    filenamePatterns?: string[];
+    contentMarkers?: string[];
+  };
+  processing?: {
+    minConfidence?: number;
+  };
+};
+
 @Injectable()
 export class BankProfileService {
   private readonly logger = new Logger(BankProfileService.name);
@@ -141,6 +175,101 @@ export class BankProfileService {
 
   private getErrorMessage(error: unknown): string {
     return error instanceof Error ? error.message : String(error);
+  }
+
+  private resolveCurrency(profile: LegacyBankProfile): string {
+    const currencySymbols = profile.patterns?.number?.currencySymbols ?? [];
+    const isoCurrency = currencySymbols.find(symbol => /^[A-Z]{3}$/.test(symbol));
+
+    if (isoCurrency) {
+      return isoCurrency;
+    }
+
+    return profile.country === 'US' ? 'USD' : 'KZT';
+  }
+
+  private normalizeColumnType(name: string): ColumnDefinition['type'] {
+    if (name === 'date') {
+      return 'date';
+    }
+
+    if (name === 'amount' || name === 'debit' || name === 'credit') {
+      return 'amount';
+    }
+
+    if (name === 'currency') {
+      return 'currency';
+    }
+
+    return 'string';
+  }
+
+  private normalizeLoadedProfile(rawProfile: unknown, fallbackId: string): BankProfile {
+    const profile = rawProfile as Partial<BankProfile> & LegacyBankProfile;
+
+    if (profile.id && Array.isArray(profile.parsing?.columns)) {
+      return profile as BankProfile;
+    }
+
+    const columns = Object.entries(profile.columns ?? {}).map(([name, column]) => ({
+      name,
+      type: this.normalizeColumnType(name),
+      required: column.required ?? false,
+      index: column.position,
+      mapping: {
+        alternatives: column.keywords ?? [],
+      },
+    }));
+
+    return {
+      id: fallbackId,
+      name: profile.name ?? fallbackId,
+      displayName: profile.name ?? fallbackId,
+      country: profile.country ?? 'KZ',
+      locale: profile.locale ?? 'ru',
+      currency: this.resolveCurrency(profile),
+      version: '1.0.0',
+      lastUpdated: new Date().toISOString(),
+      identification: {
+        documentPatterns: profile.header?.patterns ?? [],
+        filenamePatterns: profile.fileDetection?.filenamePatterns ?? [],
+        textPatterns: [
+          ...(profile.fileDetection?.contentMarkers ?? []),
+          ...(profile.header?.patterns ?? []),
+        ],
+      },
+      parsing: {
+        format: 'auto',
+        columns,
+        amountFormat: {
+          decimalSeparator: profile.patterns?.number?.decimalSeparator ?? '.',
+          thousandsSeparator: profile.patterns?.number?.thousandsSeparator ?? ',',
+          currencyPosition: 'before',
+        },
+      },
+      metadata: {
+        headerPatterns: profile.header?.patterns,
+        accountNumberPatterns: profile.header?.accountNumber?.patterns,
+        periodPatterns: profile.header?.period?.patterns,
+        balancePatterns: profile.header?.balance?.patterns,
+      },
+      validation: {
+        requiredFields: columns.filter(column => column.required).map(column => column.name),
+      },
+      quality: {
+        expectedColumns: columns.length,
+        toleranceLevels: profile.processing?.minConfidence
+          ? {
+              amount: profile.processing.minConfidence,
+              date: 0,
+              balance: profile.processing.minConfidence,
+            }
+          : undefined,
+      },
+      features: {
+        fallbackMode: 'profile',
+      },
+    };
   }
 
   private async loadProfiles(): Promise<void> {
@@ -178,16 +307,10 @@ export class BankProfileService {
     try {
       const content = readFileSync(filePath, 'utf8');
       const isYaml = filePath.endsWith('.yaml') || filePath.endsWith('.yml');
+      const fallbackId = basename(filePath, extname(filePath));
+      const rawProfile = isYaml ? yaml.load(content) : JSON.parse(content);
 
-      if (isYaml) {
-        // Use yaml parser (would need to install yaml package)
-        // const yaml = require('yaml');
-        // return yaml.parse(content) as BankProfile;
-        this.logger.warn('YAML support requires yaml package, skipping YAML files');
-        return null;
-      }
-
-      return null;
+      return this.normalizeLoadedProfile(rawProfile, fallbackId);
     } catch (error) {
       this.logger.error(`Failed to load profile from ${filePath}: ${this.getErrorMessage(error)}`);
       return null;
@@ -527,10 +650,7 @@ export class BankProfileService {
     }
 
     if (format === 'yaml') {
-      // const yaml = require('yaml');
-      // return yaml.stringify(profile);
-      this.logger.warn('YAML export requires yaml package');
-      return JSON.stringify(profile, null, 2);
+      return yaml.dump(profile);
     }
 
     return null;
@@ -544,17 +664,11 @@ export class BankProfileService {
       let profile: BankProfile;
 
       if (format === 'json') {
-        profile = JSON.parse(content) as BankProfile;
+        profile = this.normalizeLoadedProfile(JSON.parse(content), 'imported-profile');
       }
 
       if (format === 'yaml') {
-        // const yaml = require('yaml');
-        // profile = yaml.parse(content);
-        this.logger.warn('YAML import requires yaml package');
-        return {
-          success: false,
-          error: 'YAML format not supported without yaml package',
-        };
+        profile = this.normalizeLoadedProfile(yaml.load(content), 'imported-profile');
       }
 
       const validation = this.validateProfile(profile);

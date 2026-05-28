@@ -1,4 +1,16 @@
-import { Body, Controller, Delete, Get, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Put,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { User, WorkspaceServiceSettingsKey } from '../../entities';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
@@ -22,6 +34,35 @@ export class ApplicationSettingsController {
   @Delete('integrations/ai')
   disconnectAi(@CurrentUser() user: User) {
     return this.applicationSettingsService.disconnect(user, WorkspaceServiceSettingsKey.AI);
+  }
+
+  @Get('local-categorization')
+  getLocalCategorization(@CurrentUser() user: User) {
+    return this.applicationSettingsService.getLocalCategorizationStatus(user);
+  }
+
+  @Put('local-categorization')
+  saveLocalCategorization(@CurrentUser() user: User, @Body() body: Record<string, unknown>) {
+    return this.applicationSettingsService.saveLocalCategorizationSettings(user, body);
+  }
+
+  @Post('local-categorization/test')
+  testLocalCategorization(@CurrentUser() user: User, @Body() body: Record<string, unknown>) {
+    return this.applicationSettingsService.testLocalCategorization(user, body);
+  }
+
+  @Post('local-categorization/model')
+  @UseInterceptors(
+    FileInterceptor('model', {
+      storage: memoryStorage(),
+      limits: { fileSize: 500 * 1024 * 1024 },
+    }),
+  )
+  uploadLocalCategorizationModel(
+    @CurrentUser() user: User,
+    @UploadedFile() file: Express.Multer.File | undefined,
+  ) {
+    return this.applicationSettingsService.installLocalCategorizationModel(user, file);
   }
 
   @Get('email/smtp')

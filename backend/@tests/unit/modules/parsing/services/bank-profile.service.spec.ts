@@ -46,6 +46,11 @@ describe('BankProfileService', () => {
     it('getAllProfiles returns an array on init', () => {
       expect(Array.isArray(service.getAllProfiles())).toBe(true);
     });
+
+    it('loads YAML profiles from config with stable ids', () => {
+      expect(service.getProfile('bofa-en')?.name).toBe('Bank of America');
+      expect(service.getProfile('kaspi-kk')?.name).toBe('Kaspi Bank');
+    });
   });
 
   describe('getProfile', () => {
@@ -143,12 +148,12 @@ describe('BankProfileService', () => {
         id: 'filename-test-bank',
         identification: {
           documentPatterns: [],
-          filenamePatterns: ['testbank_.*\\.pdf'],
+          filenamePatterns: ['unique-testbank-.*\\.pdf'],
           textPatterns: [],
         },
       }));
 
-      const result = service.findProfileByFileName('testbank_statement_2026.pdf');
+      const result = service.findProfileByFileName('unique-testbank-2026.pdf');
 
       expect(result).toBeDefined();
       expect(result?.id).toBe('filename-test-bank');
@@ -325,11 +330,44 @@ describe('BankProfileService', () => {
       expect(result.success).toBe(false);
     });
 
-    it('returns error for YAML format (not supported)', () => {
-      const result = service.importProfile('id: test', 'yaml');
+    it('imports a valid YAML profile', () => {
+      const profile = makeProfile({ id: 'yaml-bank', name: 'YAML Bank' });
+      const yaml = `
+id: ${profile.id}
+name: ${profile.name}
+displayName: ${profile.displayName}
+country: ${profile.country}
+locale: ${profile.locale}
+currency: ${profile.currency}
+version: ${profile.version}
+lastUpdated: ${profile.lastUpdated}
+identification:
+  documentPatterns:
+    - test bank
+  filenamePatterns:
+    - testbank_.*\\.pdf
+  textPatterns:
+    - Test Bank JSC
+parsing:
+  format: pdf
+  columns:
+    - name: date
+      type: date
+      required: true
+    - name: amount
+      type: amount
+      required: true
+metadata: {}
+validation: {}
+quality: {}
+features: {}
+`;
 
-      expect(result.success).toBe(false);
-      expect(result.error).toContain('YAML');
+      const result = service.importProfile(yaml, 'yaml');
+
+      expect(result.success).toBe(true);
+      expect(result.profile?.id).toBe('yaml-bank');
+      expect(service.getProfile('yaml-bank')).toBeDefined();
     });
   });
 });

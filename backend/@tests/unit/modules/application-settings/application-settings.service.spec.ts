@@ -4,8 +4,25 @@ jest.mock('nodemailer', () => ({
   })),
 }));
 
+const mockCategorize = jest.fn();
+const mockGetModelLoadError = jest.fn();
+const mockTransactionCategorizerConstructor = jest.fn();
+
+jest.mock('../../../../src/modules/classification/helpers/transaction-categorizer', () => ({
+  TransactionCategorizer: jest.fn().mockImplementation(options => {
+    mockTransactionCategorizerConstructor(options);
+    return {
+      categorize: mockCategorize,
+      getModelLoadError: mockGetModelLoadError,
+    };
+  }),
+}));
+
 import { ApplicationSettingsService } from '../../../../src/modules/application-settings/application-settings.service';
 import { WorkspaceServiceSettingsKey } from '../../../../src/entities';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 
 describe('ApplicationSettingsService', () => {
   const originalEnv = process.env;
@@ -31,6 +48,9 @@ describe('ApplicationSettingsService', () => {
     repository.create.mockImplementation(input => input);
     repository.save.mockClear();
     repository.delete.mockClear();
+    mockCategorize.mockReset();
+    mockGetModelLoadError.mockReset();
+    mockTransactionCategorizerConstructor.mockClear();
     Object.keys(saved).forEach(key => delete saved[key]);
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
@@ -91,5 +111,78 @@ describe('ApplicationSettingsService', () => {
       workspaceId: 'workspace-1',
       key: WorkspaceServiceSettingsKey.TELEGRAM,
     });
+  });
+
+  it('saves local categorization settings without requiring a manual model path', async () => {
+    const result = await createService().saveLocalCategorizationSettings(user, {
+      enabled: true,
+      modelId: 'Xenova/paraphrase-multilingual-MiniLM-L12-v2',
+      threshold: 0.42,
+    });
+
+    expect(result.connected).toBe(false);
+    expect(result.settings).toMatchObject({
+      enabled: true,
+      modelId: 'Xenova/paraphrase-multilingual-MiniLM-L12-v2',
+      threshold: 0.42,
+      modelInstalled: false,
+    });
+    expect(saved[WorkspaceServiceSettingsKey.LOCAL_CATEGORIZATION]).toMatchObject({
+      workspaceId: 'workspace-1',
+      key: WorkspaceServiceSettingsKey.LOCAL_CATEGORIZATION,
+    });
+  });
+
+  it('tests local categorization with the saved local model path', async () => {
+    await createService().saveLocalCategorizationSettings(user, {
+      enabled: true,
+      modelId: 'Xenova/paraphrase-multilingual-MiniLM-L12-v2',
+      threshold: 0.35,
+      localModelPath: '/tmp/lumio-models',
+    });
+    mockCategorize.mockResolvedValue('Продукты');
+    mockGetModelLoadError.mockReturnValue(null);
+
+    const result = await createService().testLocalCategorization(user, {
+      merchantName: 'Fresh Market',
+      categories: ['Продукты', 'Транспорт'],
+    });
+
+    expect(result).toEqual({
+      ready: true,
+      merchantName: 'Fresh Market',
+      category: 'Продукты',
+      modelLoadError: null,
+    });
+    expect(mockTransactionCategorizerConstructor).toHaveBeenCalledWith(
+      expect.objectContaining({
+        categories: ['Продукты', 'Транспорт'],
+        threshold: 0.35,
+        allowRemoteModels: false,
+        localModelPath: '/tmp/lumio-models',
+      }),
+    );
+  });
+
+  it('installs a local categorization model archive into workspace storage', async () => {
+    const AdmZip = require('adm-zip');
+    const tempRoot = mkdtempSync(path.join(tmpdir(), 'lumio-model-test-'));
+    process.env.LOCAL_CATEGORIZATION_MODEL_ROOT = tempRoot;
+
+    const zip = new AdmZip();
+    zip.addFile('model/config.json', Buffer.from('{}'));
+    zip.addFile('model/tokenizer.json', Buffer.from('{}'));
+    zip.addFile('model/onnx/model_quantized.onnx', Buffer.from('fake-onnx'));
+
+    const result = await createService().installLocalCategorizationModel(user, {
+      originalname: 'model.zip',
+      buffer: zip.toBuffer(),
+    } as never);
+
+    expect(result.connected).toBe(true);
+    expect(result.settings.modelInstalled).toBe(true);
+    expect(result.settings.localModelPath).toBe(tempRoot);
+
+    rmSync(tempRoot, { recursive: true, force: true });
   });
 });

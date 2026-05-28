@@ -1,9 +1,15 @@
+import { randomUUID } from 'node:crypto';
+import { promises as fs } from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import AdmZip from 'adm-zip';
 import nodemailer from 'nodemailer';
 import type { Repository } from 'typeorm';
 import { decryptText, encryptText } from '../../common/utils/encryption.util';
 import { User, WorkspaceServiceSettings, WorkspaceServiceSettingsKey } from '../../entities';
+import { TransactionCategorizer } from '../classification/helpers/transaction-categorizer';
 
 export type AiRuntimeSettings = {
   enabled: boolean;
@@ -11,6 +17,14 @@ export type AiRuntimeSettings = {
   apiKey: string | null;
   model: string | null;
   timeoutMs: number;
+  source: 'workspace' | 'env' | 'disabled';
+};
+
+export type LocalCategorizationRuntimeSettings = {
+  enabled: boolean;
+  modelId: string;
+  threshold: number;
+  localModelPath: string | null;
   source: 'workspace' | 'env' | 'disabled';
 };
 
@@ -36,6 +50,21 @@ export type AppRuntimeSettings = {
   publicUrl: string | null;
   source: 'workspace' | 'env' | 'disabled';
 };
+
+type UploadedModelArchive = {
+  originalname?: string;
+  buffer?: Buffer;
+};
+
+const DEFAULT_LOCAL_CATEGORIZATION_MODEL_ID = 'Xenova/paraphrase-multilingual-MiniLM-L12-v2';
+const DEFAULT_LOCAL_CATEGORIZATION_THRESHOLD = 0.35;
+const DEFAULT_LOCAL_CATEGORIZATION_CATEGORIES = [
+  'Продукты',
+  'Транспорт',
+  'Развлечения',
+  'Здоровье',
+  'Коммунальные услуги',
+];
 
 @Injectable()
 export class ApplicationSettingsService {
@@ -166,6 +195,103 @@ export class ApplicationSettingsService {
     return { ok: true };
   }
 
+  async getLocalCategorizationStatus(user: User) {
+    const runtime = await this.getLocalCategorizationSettings(user);
+    const modelInstalled = runtime.localModelPath
+      ? await this.hasLocalCategorizationModelFiles(runtime.localModelPath, runtime.modelId)
+      : false;
+
+    return {
+      connected: runtime.enabled && modelInstalled,
+      status: runtime.enabled && modelInstalled ? 'connected' : 'disconnected',
+      source: runtime.source,
+      settings: {
+        enabled: runtime.enabled,
+        modelId: runtime.modelId,
+        threshold: runtime.threshold,
+        localModelPath: runtime.localModelPath,
+        modelInstalled,
+      },
+    };
+  }
+
+  async saveLocalCategorizationSettings(user: User, input: Record<string, unknown>) {
+    const existing = await this.findSettings(
+      user,
+      WorkspaceServiceSettingsKey.LOCAL_CATEGORIZATION,
+    );
+    const previous = existing
+      ? this.localCategorizationRuntimeFromParts(existing.config, 'workspace')
+      : null;
+    const config = {
+      enabled: this.booleanValue(input.enabled, previous?.enabled ?? true),
+      modelId:
+        this.stringValue(input.modelId) ||
+        previous?.modelId ||
+        DEFAULT_LOCAL_CATEGORIZATION_MODEL_ID,
+      threshold: this.thresholdValue(input.threshold, previous?.threshold),
+      localModelPath: this.stringValue(input.localModelPath) || previous?.localModelPath || null,
+    };
+
+    await this.saveSettings(user, WorkspaceServiceSettingsKey.LOCAL_CATEGORIZATION, config, {});
+    return this.getLocalCategorizationStatus(user);
+  }
+
+  async installLocalCategorizationModel(user: User, file: UploadedModelArchive) {
+    if (!file?.buffer?.length) {
+      throw new BadRequestException('Model archive is required');
+    }
+
+    const existing = await this.getLocalCategorizationSettings(user);
+    const modelId = existing.modelId || DEFAULT_LOCAL_CATEGORIZATION_MODEL_ID;
+    const modelRoot = this.getLocalCategorizationModelRoot();
+    const targetDir = this.resolveLocalModelDirectory(modelRoot, modelId);
+    const stagingDir = path.join(os.tmpdir(), `lumio-model-${randomUUID()}`);
+
+    try {
+      await fs.mkdir(stagingDir, { recursive: true });
+      await this.extractZipBuffer(file.buffer, stagingDir);
+      const modelSourceDir = await this.findExtractedModelDirectory(stagingDir);
+
+      await fs.rm(targetDir, { recursive: true, force: true });
+      await fs.mkdir(path.dirname(targetDir), { recursive: true });
+      await fs.cp(modelSourceDir, targetDir, { recursive: true });
+    } finally {
+      await fs.rm(stagingDir, { recursive: true, force: true });
+    }
+
+    await this.saveLocalCategorizationSettings(user, {
+      enabled: true,
+      modelId,
+      threshold: existing.threshold,
+      localModelPath: modelRoot,
+    });
+
+    return this.getLocalCategorizationStatus(user);
+  }
+
+  async testLocalCategorization(user: User, input: Record<string, unknown>) {
+    const runtime = await this.getLocalCategorizationSettings(user);
+    const merchantName = this.requiredString(input.merchantName, 'merchantName');
+    const categories = this.stringArrayValue(input.categories);
+    const categorizer = new TransactionCategorizer({
+      categories: categories.length ? categories : DEFAULT_LOCAL_CATEGORIZATION_CATEGORIES,
+      threshold: runtime.threshold,
+      modelId: runtime.modelId,
+      allowRemoteModels: false,
+      localModelPath: runtime.localModelPath || undefined,
+    });
+    const category = await categorizer.categorize(merchantName);
+    const modelLoadError = categorizer.getModelLoadError();
+
+    return {
+      ready: !modelLoadError,
+      merchantName,
+      category,
+      modelLoadError: modelLoadError?.message || null,
+    };
+  }
+
   async getAiSettings(user?: User | null): Promise<AiRuntimeSettings> {
     const workspace = user ? await this.findSettings(user, WorkspaceServiceSettingsKey.AI) : null;
     if (workspace) {
@@ -184,6 +310,28 @@ export class ApplicationSettingsService {
       timeoutMs: this.positiveNumber(process.env.AI_TIMEOUT_MS, 20000),
     };
     return env.baseUrl && env.model ? { ...env, source: 'env' } : { ...env, source: 'disabled' };
+  }
+
+  async getLocalCategorizationSettings(
+    user?: User | null,
+  ): Promise<LocalCategorizationRuntimeSettings> {
+    const workspace = user
+      ? await this.findSettings(user, WorkspaceServiceSettingsKey.LOCAL_CATEGORIZATION)
+      : null;
+    if (workspace) {
+      return this.localCategorizationRuntimeFromParts(workspace.config, 'workspace');
+    }
+
+    const env = {
+      enabled: process.env.LOCAL_CATEGORIZATION_ENABLED !== 'false',
+      modelId: process.env.LOCAL_CATEGORIZATION_MODEL_ID || DEFAULT_LOCAL_CATEGORIZATION_MODEL_ID,
+      threshold: this.thresholdValue(process.env.LOCAL_CATEGORIZATION_THRESHOLD),
+      localModelPath: process.env.LOCAL_CATEGORIZATION_MODEL_PATH || null,
+    };
+    return {
+      ...env,
+      source: env.enabled && env.localModelPath ? 'env' : 'disabled',
+    };
   }
 
   async getAiSettingsForWorkspaceId(workspaceId?: string | null): Promise<AiRuntimeSettings> {
@@ -356,6 +504,109 @@ export class ApplicationSettingsService {
     };
   }
 
+  private localCategorizationRuntimeFromParts(
+    config: Record<string, unknown>,
+    source: LocalCategorizationRuntimeSettings['source'],
+  ): LocalCategorizationRuntimeSettings {
+    const enabled = this.booleanValue(config.enabled, true);
+    const localModelPath = this.stringValue(config.localModelPath) || null;
+    return {
+      enabled,
+      modelId: this.stringValue(config.modelId) || DEFAULT_LOCAL_CATEGORIZATION_MODEL_ID,
+      threshold: this.thresholdValue(config.threshold),
+      localModelPath,
+      source: enabled && localModelPath ? source : 'disabled',
+    };
+  }
+
+  private getLocalCategorizationModelRoot(): string {
+    return (
+      process.env.LOCAL_CATEGORIZATION_MODEL_ROOT ||
+      path.join(process.cwd(), '.local-models', 'categorization')
+    );
+  }
+
+  private resolveLocalModelDirectory(modelRoot: string, modelId: string): string {
+    const parts = modelId.split('/').filter(Boolean);
+    if (
+      !parts.length ||
+      parts.some(part => part === '.' || part === '..' || path.isAbsolute(part))
+    ) {
+      throw new BadRequestException('modelId is invalid');
+    }
+    return path.join(modelRoot, ...parts);
+  }
+
+  private async extractZipBuffer(buffer: Buffer, destination: string): Promise<void> {
+    let zip: AdmZip;
+    try {
+      zip = new AdmZip(buffer);
+    } catch {
+      throw new BadRequestException('Model archive must be a valid ZIP file');
+    }
+
+    for (const entry of zip.getEntries()) {
+      const normalizedName = path.normalize(entry.entryName);
+      if (
+        path.isAbsolute(normalizedName) ||
+        normalizedName.startsWith('..') ||
+        normalizedName.includes(`${path.sep}..${path.sep}`)
+      ) {
+        throw new BadRequestException('Model archive contains unsafe paths');
+      }
+
+      const targetPath = path.join(destination, normalizedName);
+      if (entry.isDirectory) {
+        await fs.mkdir(targetPath, { recursive: true });
+      } else {
+        await fs.mkdir(path.dirname(targetPath), { recursive: true });
+        await fs.writeFile(targetPath, entry.getData());
+      }
+    }
+  }
+
+  private async findExtractedModelDirectory(root: string): Promise<string> {
+    const candidates = await this.walkDirectories(root);
+    for (const candidate of candidates) {
+      if (await this.directoryLooksLikeTransformersModel(candidate)) {
+        return candidate;
+      }
+    }
+    throw new BadRequestException('Model archive must contain config.json and an ONNX model file');
+  }
+
+  private async walkDirectories(root: string): Promise<string[]> {
+    const result = [root];
+    const entries = await fs.readdir(root, { withFileTypes: true });
+    for (const entry of entries) {
+      if (entry.isDirectory()) {
+        result.push(...(await this.walkDirectories(path.join(root, entry.name))));
+      }
+    }
+    return result;
+  }
+
+  private async hasLocalCategorizationModelFiles(
+    modelRoot: string,
+    modelId: string,
+  ): Promise<boolean> {
+    return this.directoryLooksLikeTransformersModel(
+      this.resolveLocalModelDirectory(modelRoot, modelId),
+    );
+  }
+
+  private async directoryLooksLikeTransformersModel(directory: string): Promise<boolean> {
+    try {
+      const configPath = path.join(directory, 'config.json');
+      await fs.access(configPath);
+      const onnxDir = path.join(directory, 'onnx');
+      const onnxEntries = await fs.readdir(onnxDir);
+      return onnxEntries.some(entry => entry.endsWith('.onnx'));
+    } catch {
+      return false;
+    }
+  }
+
   private async assertAiConnection(settings: AiRuntimeSettings) {
     if (!(settings.baseUrl && settings.model)) {
       throw new BadRequestException('AI baseUrl and model are required');
@@ -472,6 +723,29 @@ export class ApplicationSettingsService {
           ? Number(value)
           : Number.NaN;
     return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+  }
+
+  private thresholdValue(
+    value: unknown,
+    fallback = DEFAULT_LOCAL_CATEGORIZATION_THRESHOLD,
+  ): number {
+    const parsed =
+      typeof value === 'number'
+        ? value
+        : typeof value === 'string' && value.trim()
+          ? Number(value)
+          : Number.NaN;
+    return Number.isFinite(parsed) && parsed > 0 && parsed <= 1 ? parsed : fallback;
+  }
+
+  private stringArrayValue(value: unknown): string[] {
+    if (!Array.isArray(value)) {
+      return [];
+    }
+    return value
+      .filter((item): item is string => typeof item === 'string')
+      .map(item => item.trim())
+      .filter(Boolean);
   }
 
   private normalizeOrigin(value: string): string {
