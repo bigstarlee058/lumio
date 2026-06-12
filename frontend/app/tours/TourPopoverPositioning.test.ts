@@ -1,16 +1,28 @@
-import { describe, expect, it } from 'vitest';
+import type { PopoverDOM } from 'driver.js';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   clampTourPopoverToBounds,
   clampTourPopoverToViewport,
+  cleanupStableTourPopoverPositioning,
   positionTourPopoverNearElement,
+  stabilizeTourPopover,
 } from './TourPopoverPositioning';
+
+interface TestRect {
+  x?: number;
+  y?: number;
+  left?: number;
+  top?: number;
+  width?: number;
+  height?: number;
+}
 
 function setViewport(width: number, height: number): void {
   Object.defineProperty(window, 'innerWidth', { configurable: true, value: width });
   Object.defineProperty(window, 'innerHeight', { configurable: true, value: height });
 }
 
-function createPopoverRect(rect: DOMRectInit): HTMLElement {
+function createPopoverRect(rect: TestRect): HTMLElement {
   const popover = document.createElement('div');
   popover.getBoundingClientRect = () => {
     const left = popover.style.left
@@ -37,13 +49,14 @@ function createPopoverRect(rect: DOMRectInit): HTMLElement {
   return popover;
 }
 
-function createTargetRect(rect: DOMRectInit): HTMLElement {
+function createTargetRect(rect: TestRect | (() => TestRect)): HTMLElement {
   const target = document.createElement('button');
   target.getBoundingClientRect = () => {
-    const left = rect.left ?? rect.x ?? 0;
-    const top = rect.top ?? rect.y ?? 0;
-    const width = rect.width ?? 0;
-    const height = rect.height ?? 0;
+    const currentRect = typeof rect === 'function' ? rect() : rect;
+    const left = currentRect.left ?? currentRect.x ?? 0;
+    const top = currentRect.top ?? currentRect.y ?? 0;
+    const width = currentRect.width ?? 0;
+    const height = currentRect.height ?? 0;
     return {
       x: left,
       y: top,
@@ -59,6 +72,33 @@ function createTargetRect(rect: DOMRectInit): HTMLElement {
   document.body.appendChild(target);
   return target;
 }
+
+function createPopoverDom(wrapper: HTMLElement): PopoverDOM {
+  const footer = document.createElement('footer');
+  const footerButtons = document.createElement('div');
+  const previousButton = document.createElement('button');
+  const nextButton = document.createElement('button');
+  const closeButton = document.createElement('button');
+
+  return {
+    wrapper,
+    arrow: document.createElement('div'),
+    title: document.createElement('h2'),
+    description: document.createElement('div'),
+    footer,
+    progress: document.createElement('span'),
+    previousButton,
+    nextButton,
+    closeButton,
+    footerButtons,
+  };
+}
+
+afterEach(() => {
+  cleanupStableTourPopoverPositioning();
+  document.body.innerHTML = '';
+  vi.useRealTimers();
+});
 
 describe('clampTourPopoverToViewport', () => {
   it('keeps a popover inside the viewport when Driver.js places it off-screen', () => {
@@ -137,5 +177,35 @@ describe('clampTourPopoverToViewport', () => {
 
     expect(popover.style.left).toBe('96px');
     expect(popover.style.top).toBe('468px');
+  });
+
+  it('keeps the popover attached when the highlighted element moves without scroll or resize', async () => {
+    vi.useFakeTimers();
+    setViewport(1200, 900);
+    let targetLeft = 96;
+    const popover = createPopoverRect({
+      left: 0,
+      top: 0,
+      width: 400,
+      height: 220,
+    });
+    const target = createTargetRect(() => ({
+      left: targetLeft,
+      top: 180,
+      width: 112,
+      height: 48,
+    }));
+    target.classList.add('driver-active-element');
+
+    stabilizeTourPopover(createPopoverDom(popover), { side: 'bottom', align: 'start' });
+
+    expect(popover.style.left).toBe('96px');
+    expect(popover.style.top).toBe('240px');
+
+    targetLeft = 360;
+    await vi.advanceTimersByTimeAsync(32);
+
+    expect(popover.style.left).toBe('360px');
+    expect(popover.style.top).toBe('240px');
   });
 });

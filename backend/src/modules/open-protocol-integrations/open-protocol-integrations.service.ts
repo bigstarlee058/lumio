@@ -16,6 +16,7 @@ import type { Repository } from 'typeorm';
 import type { FileStat, WebDAVClient } from 'webdav';
 import { FileStorageService } from '../../common/services/file-storage.service';
 import { decryptText, encryptText } from '../../common/utils/encryption.util';
+import { assertPublicEgressHost, assertPublicEgressUrl } from '../../common/utils/egress-url.util';
 import { validateFile } from '../../common/utils/file-validator.util';
 import { normalizeFilename } from '../../common/utils/filename.util';
 import { buildContentDisposition } from '../../common/utils/http-file.util';
@@ -162,6 +163,7 @@ export class OpenProtocolIntegrationsService {
   async saveS3Settings(user: User, input: S3SettingsInput): Promise<ProtocolStatusResponse> {
     const existing = await this.findProtocolIntegration(user, IntegrationProvider.S3_COMPATIBLE);
     const config = this.mergeS3Config(existing.settings, input);
+    await assertPublicEgressUrl(config.endpoint);
     await this.assertS3Connection(config);
     await this.saveProtocolSettings(user, IntegrationProvider.S3_COMPATIBLE, {
       config: this.publicS3Config(config),
@@ -198,6 +200,7 @@ export class OpenProtocolIntegrationsService {
   ): Promise<ProtocolStatusResponse> {
     const existing = await this.findProtocolIntegration(user, IntegrationProvider.WEBDAV);
     const config = this.mergeWebdavConfig(existing.settings, input);
+    await assertPublicEgressUrl(config.url);
     await this.assertWebdavConnection(config);
     await this.saveProtocolSettings(user, IntegrationProvider.WEBDAV, {
       config: {
@@ -236,6 +239,7 @@ export class OpenProtocolIntegrationsService {
   async saveImapSettings(user: User, input: ImapSettingsInput): Promise<ProtocolStatusResponse> {
     const existing = await this.findProtocolIntegration(user, IntegrationProvider.IMAP);
     const config = this.mergeImapConfig(existing.settings, input);
+    await assertPublicEgressHost(config.host);
     await this.assertImapConnection(config);
     await this.saveProtocolSettings(user, IntegrationProvider.IMAP, {
       config: {
@@ -259,6 +263,7 @@ export class OpenProtocolIntegrationsService {
     user: string;
     pass: string;
   }): Promise<string[]> {
+    await assertPublicEgressHost(input.host);
     const client = new ImapFlow({
       host: input.host,
       port: input.port,
@@ -380,6 +385,7 @@ export class OpenProtocolIntegrationsService {
     if (!config.autoBackup) {
       return;
     }
+    await assertPublicEgressUrl(config.endpoint);
     const statement = await this.statementRepository.findOne({ where: { id: statementId } });
     if (!statement) {
       return;
@@ -723,7 +729,9 @@ export class OpenProtocolIntegrationsService {
       IntegrationProvider.S3_COMPATIBLE,
     );
     if (settings) {
-      return this.getS3ConfigFromSettings(settings);
+      const config = this.getS3ConfigFromSettings(settings);
+      await assertPublicEgressUrl(config.endpoint);
+      return config;
     }
     const config = this.getS3ConfigFromEnv(true);
     if (!config) {
@@ -751,6 +759,7 @@ export class OpenProtocolIntegrationsService {
       accessKeyId: process.env.S3_ACCESS_KEY_ID,
       secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
       forcePathStyle: process.env.S3_FORCE_PATH_STYLE !== 'false',
+      autoBackup: false,
     };
   }
 
@@ -784,7 +793,9 @@ export class OpenProtocolIntegrationsService {
   private async getWebdavConfig(user: User): Promise<WebdavConfig> {
     const { settings } = await this.findProtocolIntegration(user, IntegrationProvider.WEBDAV);
     if (settings) {
-      return this.getWebdavConfigFromSettings(settings);
+      const config = this.getWebdavConfigFromSettings(settings);
+      await assertPublicEgressUrl(config.url);
+      return config;
     }
     const config = this.getWebdavConfigFromEnv(true);
     if (!config) {
@@ -829,7 +840,9 @@ export class OpenProtocolIntegrationsService {
   private async getImapConfig(user: User): Promise<ImapConfig> {
     const { settings } = await this.findProtocolIntegration(user, IntegrationProvider.IMAP);
     if (settings) {
-      return this.getImapConfigFromSettings(settings);
+      const config = this.getImapConfigFromSettings(settings);
+      await assertPublicEgressHost(config.host);
+      return config;
     }
     const config = this.getImapConfigFromEnv(true);
     if (!config) {

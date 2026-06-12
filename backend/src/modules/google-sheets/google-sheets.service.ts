@@ -9,6 +9,7 @@ import { GoogleSheetsCredential } from '../../entities/google-sheets-credential.
 import { Transaction } from '../../entities/transaction.entity';
 import type { User } from '../../entities/user.entity';
 import { Wallet } from '../../entities/wallet.entity';
+import { decryptText, encryptText } from '../../common/utils/encryption.util';
 import type { ConnectPickerSheetDto } from './dto/connect-picker-sheet.dto';
 import type { ConnectSheetDto } from './dto/connect-sheet.dto';
 import { GoogleSheetsApiService } from './services/google-sheets-api.service';
@@ -40,6 +41,14 @@ export class GoogleSheetsService {
     });
   }
 
+  private encryptToken(value: string): string {
+    return value ? encryptText(value) : value;
+  }
+
+  private decryptToken(value: string | null | undefined): string {
+    return value ? decryptText(value) : '';
+  }
+
   private async upsertCredential(
     userId: string,
     workspaceId: string,
@@ -54,8 +63,8 @@ export class GoogleSheetsService {
       ...(existing || {}),
       userId,
       workspaceId,
-      accessToken: payload.accessToken,
-      refreshToken: payload.refreshToken,
+      accessToken: this.encryptToken(payload.accessToken),
+      refreshToken: this.encryptToken(payload.refreshToken),
       email: payload.email ?? existing?.email ?? null,
     });
 
@@ -74,7 +83,7 @@ export class GoogleSheetsService {
     const { accessToken, refreshToken } =
       await this.googleSheetsApiService.exchangeCodeForTokens(code);
     const existing = await this.findCredential(user.id, workspaceId);
-    const resolvedRefreshToken = refreshToken || existing?.refreshToken || '';
+    const resolvedRefreshToken = refreshToken || this.decryptToken(existing?.refreshToken);
 
     if (!resolvedRefreshToken) {
       throw new BadRequestException(
@@ -102,16 +111,17 @@ export class GoogleSheetsService {
       throw new BadRequestException('Google account is not connected.');
     }
 
-    let accessToken = credential.accessToken;
+    let accessToken = this.decryptToken(credential.accessToken);
+    const refreshToken = this.decryptToken(credential.refreshToken);
     const hasAccess = await this.googleSheetsApiService.verifyAccess(
       accessToken,
-      credential.refreshToken,
+      refreshToken,
       spreadsheetId,
     );
 
     if (!hasAccess) {
-      accessToken = await this.googleSheetsApiService.refreshAccessToken(credential.refreshToken);
-      credential.accessToken = accessToken;
+      accessToken = await this.googleSheetsApiService.refreshAccessToken(refreshToken);
+      credential.accessToken = this.encryptToken(accessToken);
       await this.googleSheetsCredentialRepository.save(credential);
     }
 
@@ -129,14 +139,16 @@ export class GoogleSheetsService {
       throw new BadRequestException('Google account is not connected.');
     }
 
-    if (credential.accessToken) {
-      return { accessToken: credential.accessToken, apiKey };
+    const storedAccessToken = this.decryptToken(credential.accessToken);
+    const storedRefreshToken = this.decryptToken(credential.refreshToken);
+    if (storedAccessToken) {
+      return { accessToken: storedAccessToken, apiKey };
     }
 
     const accessToken = await this.googleSheetsApiService.refreshAccessToken(
-      credential.refreshToken,
+      storedRefreshToken,
     );
-    credential.accessToken = accessToken;
+    credential.accessToken = this.encryptToken(accessToken);
     await this.googleSheetsCredentialRepository.save(credential);
     return { accessToken, apiKey };
   }
@@ -149,7 +161,7 @@ export class GoogleSheetsService {
     }
 
     const info = await this.googleSheetsApiService.getSpreadsheetInfo(
-      credential.accessToken,
+      this.decryptToken(credential.accessToken),
       dto.spreadsheetId,
     );
     const sheetName = dto.sheetName?.trim() || info.title || dto.spreadsheetId;
@@ -163,8 +175,8 @@ export class GoogleSheetsService {
         sheetName,
         worksheetName,
       },
-      credential.accessToken,
-      credential.refreshToken,
+      this.decryptToken(credential.accessToken),
+      this.decryptToken(credential.refreshToken),
     );
   }
 
@@ -188,7 +200,7 @@ export class GoogleSheetsService {
     }
 
     const info = await this.googleSheetsApiService.getSpreadsheetInfo(
-      credential.accessToken,
+      this.decryptToken(credential.accessToken),
       sheetId,
     );
     const sheetName = sheetNameOverride?.trim() || info.title || sheetId;
@@ -198,8 +210,8 @@ export class GoogleSheetsService {
       user,
       workspaceId,
       { sheetId, sheetName, worksheetName: worksheet || undefined },
-      credential.accessToken,
-      credential.refreshToken,
+      this.decryptToken(credential.accessToken),
+      this.decryptToken(credential.refreshToken),
     );
   }
 
@@ -216,8 +228,8 @@ export class GoogleSheetsService {
       sheetId: connectDto.sheetId,
       sheetName: connectDto.sheetName,
       worksheetName: connectDto.worksheetName || null,
-      accessToken,
-      refreshToken,
+      accessToken: this.encryptToken(accessToken),
+      refreshToken: this.encryptToken(refreshToken),
       isActive: true,
     });
 
@@ -337,11 +349,12 @@ export class GoogleSheetsService {
       const credential = await this.findCredential(sheet.userId, workspaceId);
 
       // Refresh access token if needed
-      let accessToken = sheet.accessToken;
-      const refreshToken = sheet.refreshToken || credential?.refreshToken || '';
+      let accessToken = this.decryptToken(sheet.accessToken);
+      const refreshToken =
+        this.decryptToken(sheet.refreshToken) || this.decryptToken(credential?.refreshToken);
 
       if ((!sheet.refreshToken || sheet.refreshToken.includes('placeholder')) && refreshToken) {
-        sheet.refreshToken = refreshToken;
+        sheet.refreshToken = this.encryptToken(refreshToken);
       }
 
       try {
@@ -353,9 +366,9 @@ export class GoogleSheetsService {
         if (!hasValidAccess) {
           accessToken = await this.googleSheetsApiService.refreshAccessToken(refreshToken);
           // Update stored token
-          sheet.accessToken = accessToken;
+          sheet.accessToken = this.encryptToken(accessToken);
           if (credential) {
-            credential.accessToken = accessToken;
+            credential.accessToken = this.encryptToken(accessToken);
             await this.googleSheetsCredentialRepository.save(credential);
           }
           await this.googleSheetRepository.save(sheet);

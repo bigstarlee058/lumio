@@ -1,8 +1,14 @@
-import { type ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  type ExecutionContext,
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ModuleRef, Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
-import { IS_PUBLIC_KEY } from '../../modules/auth/decorators/public.decorator';
 import type { ApiKeysService } from '../../modules/api-keys/api-keys.service';
+import { IS_PUBLIC_KEY } from '../../modules/auth/decorators/public.decorator';
+import type { AuthenticatedUser } from '../../modules/auth/strategies/jwt.strategy';
 import type { AuthenticatedRequest } from '../interfaces/authenticated-request.interface';
 
 @Injectable()
@@ -51,11 +57,14 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       throw new UnauthorizedException('Invalid or revoked API key');
     }
 
-    request.user = apiKey.user as any;
-    // Expose workspace id via header so WorkspaceContextGuard can pick it up
-    if (!request.headers['x-workspace-id']) {
-      request.headers['x-workspace-id'] = apiKey.workspaceId;
+    request.user = apiKey.user as AuthenticatedUser;
+    request.apiKeyWorkspaceId = apiKey.workspaceId;
+
+    const requestedWorkspaceId = request.headers['x-workspace-id'];
+    if (requestedWorkspaceId && String(requestedWorkspaceId) !== apiKey.workspaceId) {
+      throw new ForbiddenException('API key is not valid for the requested workspace');
     }
+    request.headers['x-workspace-id'] = apiKey.workspaceId;
 
     return true;
   }

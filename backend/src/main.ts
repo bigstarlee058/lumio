@@ -23,6 +23,7 @@ async function bootstrap() {
     requireEnv('DATABASE_URL');
     requireEnv('JWT_SECRET');
     requireEnv('JWT_REFRESH_SECRET');
+    requireEnv('INTEGRATIONS_ENCRYPTION_KEY');
   }
 
   const uploadsDir = resolveUploadsDir();

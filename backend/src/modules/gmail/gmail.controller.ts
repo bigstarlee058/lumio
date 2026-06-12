@@ -1,7 +1,5 @@
-import { exec } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import { promisify } from 'util';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   BadRequestException,
@@ -24,6 +22,7 @@ import { Cache } from 'cache-manager';
 import { Response } from 'express';
 import { Repository } from 'typeorm';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { runExecutable } from '../../common/utils/thumbnail-command.util';
 import { resolveUploadsDir } from '../../common/utils/uploads.util';
 import {
   Category,
@@ -54,7 +53,6 @@ import { GmailSyncService } from './services/gmail-sync.service';
 import { GmailWatchService } from './services/gmail-watch.service';
 import { GmailService } from './services/gmail.service';
 
-const execAsync = promisify(exec);
 const AMOUNT_PRESENT_SQL = "NULLIF(TRIM(receipt.parsed_data->>'amount'), '') IS NOT NULL";
 const AMOUNT_MISSING_SQL = "NULLIF(TRIM(receipt.parsed_data->>'amount'), '') IS NULL";
 
@@ -762,7 +760,12 @@ export class GmailController {
     try {
       thumbnailPath = path.join('/tmp', `receipt-thumbnail-${id}-${Date.now()}.png`);
       const scriptPath = path.join(__dirname, '../../../scripts/generate-thumbnail.py');
-      await execAsync(`python3 "${scriptPath}" "${pdfPath}" "${thumbnailPath}" ${thumbnailWidth}`);
+      await runExecutable('python3', [
+        scriptPath,
+        pdfPath,
+        thumbnailPath,
+        String(thumbnailWidth),
+      ]);
 
       const thumbnailData = await fs.promises.readFile(thumbnailPath);
       await this.cacheManager.set(cacheKey, thumbnailData.toString('base64'), 604800);

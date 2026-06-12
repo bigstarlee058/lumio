@@ -1,4 +1,5 @@
 import { GoogleSheetsService } from '@/modules/google-sheets/google-sheets.service';
+import { decryptText, encryptText } from '@/common/utils/encryption.util';
 
 function createRepoMock<T>() {
   return {
@@ -58,7 +59,7 @@ describe('GoogleSheetsService', () => {
     });
   });
 
-  it('connectOAuthSession stores reusable credentials without creating sheet connection', async () => {
+  it('connectOAuthSession stores reusable credentials encrypted without creating sheet connection', async () => {
     credentialRepository.findOne = jest.fn(async () => null);
     googleSheetsApiService.exchangeCodeForTokens.mockResolvedValue({
       accessToken: 'access-1',
@@ -73,15 +74,16 @@ describe('GoogleSheetsService', () => {
       email: 'picker@example.com',
     });
     expect(googleSheetRepository.create).not.toHaveBeenCalled();
-    expect(credentialRepository.save).toHaveBeenCalledWith(
-      expect.objectContaining({
-        userId: 'u1',
-        workspaceId: 'ws1',
-        accessToken: 'access-1',
-        refreshToken: 'refresh-1',
-        email: 'picker@example.com',
-      }),
-    );
+    const saved = credentialRepository.save.mock.calls[0][0];
+    expect(saved).toMatchObject({
+      userId: 'u1',
+      workspaceId: 'ws1',
+      email: 'picker@example.com',
+    });
+    expect(saved.accessToken).toMatch(/^enc:/);
+    expect(saved.refreshToken).toMatch(/^enc:/);
+    expect(decryptText(saved.accessToken)).toBe('access-1');
+    expect(decryptText(saved.refreshToken)).toBe('refresh-1');
   });
 
   it('listWorksheets returns worksheet metadata using reusable credentials', async () => {
@@ -104,8 +106,8 @@ describe('GoogleSheetsService', () => {
     credentialRepository.findOne = jest.fn(async () => ({
       userId: 'u1',
       workspaceId: 'ws1',
-      accessToken: 'access-1',
-      refreshToken: 'refresh-1',
+      accessToken: encryptText('access-1'),
+      refreshToken: encryptText('refresh-1'),
     }));
     googleSheetsApiService.verifyAccess.mockResolvedValue(true);
 
@@ -139,8 +141,8 @@ describe('GoogleSheetsService', () => {
     credentialRepository.findOne = jest.fn(async () => ({
       userId: 'u1',
       workspaceId: 'ws1',
-      accessToken: 'access-1',
-      refreshToken: 'refresh-1',
+      accessToken: encryptText('access-1'),
+      refreshToken: encryptText('refresh-1'),
       email: 'picker@example.com',
     }));
     googleSheetsApiService.getSpreadsheetInfo.mockResolvedValue({
@@ -157,9 +159,9 @@ describe('GoogleSheetsService', () => {
       sheetId: 'spreadsheet-1',
       sheetName: 'Imported sheet',
       worksheetName: 'Sheet1',
-      accessToken: 'access-1',
-      refreshToken: 'refresh-1',
     });
+    expect(result.accessToken).toMatch(/^enc:/);
+    expect(result.refreshToken).toMatch(/^enc:/);
     expect(googleSheetRepository.save).toHaveBeenCalled();
   });
 });

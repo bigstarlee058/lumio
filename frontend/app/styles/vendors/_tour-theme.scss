@@ -25,6 +25,9 @@
   animation: driver-fade-in 0.2s ease-out;
 
   @include dark {
+    background-color: $color-card-bg-dk;
+    color: $color-foreground-dk;
+    border-color: $color-border-dk;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
   }
 
@@ -72,6 +75,10 @@
   margin-bottom: 12px;
   color: $color-primary;
   line-height: 1.4;
+
+  @include dark {
+    color: $color-primary-dk;
+  }
 }
 
 /* Description */
@@ -88,6 +95,14 @@
   strong {
     color: $color-foreground;
     font-weight: 600;
+
+    @include dark {
+      color: $color-foreground-dk;
+    }
+  }
+
+  @include dark {
+    color: $color-muted-foreground-dk;
   }
 }
 
@@ -109,6 +124,10 @@
   font-size: 12px;
   color: $color-muted-foreground;
   font-weight: 500;
+
+  @include dark {
+    color: $color-muted-foreground-dk;
+  }
 }
 
 /* Buttons container */
@@ -136,10 +155,20 @@
   background-color: $color-primary;
   color: $color-primary-foreground;
 
+  @include dark {
+    background-color: $color-primary-dk;
+    color: $color-background-dk;
+  }
+
   &:hover {
     background-color: $color-primary-hover;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px color-mix(in srgb, $color-primary 40%, transparent);
+
+    @include dark {
+      background-color: $color-primary-hover-dk;
+      box-shadow: 0 4px 12px color-mix(in srgb, $color-primary-dk 36%, transparent);
+    }
   }
 
   &:active {
@@ -169,10 +198,21 @@
   color: $color-muted-foreground;
   border: 1px solid $color-border;
 
+  @include dark {
+    color: $color-muted-foreground-dk;
+    border-color: $color-border-dk;
+  }
+
   &:hover {
     background-color: $color-muted;
     color: $color-foreground;
     border-color: color-mix(in srgb, $color-border 60%, transparent);
+
+    @include dark {
+      background-color: $color-muted-dk;
+      color: $color-foreground-dk;
+      border-color: color-mix(in srgb, $color-border-dk 70%, transparent);
+    }
   }
 
   &:disabled {
@@ -208,9 +248,18 @@
   align-items: center;
   justify-content: center;
 
+  @include dark {
+    color: $color-muted-foreground-dk;
+  }
+
   &:hover {
     background-color: $color-muted;
     color: $color-foreground;
+
+    @include dark {
+      background-color: $color-muted-dk;
+      color: $color-foreground-dk;
+    }
   }
 
   &:focus-visible {
@@ -222,22 +271,42 @@
 /* Popover arrow */
 .driver-popover-arrow {
   border-color: $color-card-bg;
+
+  @include dark {
+    border-color: $color-card-bg-dk;
+  }
 }
 
 .driver-popover-arrow-side-top {
   border-top-color: $color-card-bg;
+
+  @include dark {
+    border-top-color: $color-card-bg-dk;
+  }
 }
 
 .driver-popover-arrow-side-bottom {
   border-bottom-color: $color-card-bg;
+
+  @include dark {
+    border-bottom-color: $color-card-bg-dk;
+  }
 }
 
 .driver-popover-arrow-side-left {
   border-left-color: $color-card-bg;
+
+  @include dark {
+    border-left-color: $color-card-bg-dk;
+  }
 }
 
 .driver-popover-arrow-side-right {
   border-right-color: $color-card-bg;
+
+  @include dark {
+    border-right-color: $color-card-bg-dk;
+  }
 }
 
 /* Highlighted element */
@@ -287,12 +356,20 @@
   border-radius: 0;
   overflow: hidden;
 
+  @include dark {
+    background-color: $color-muted-dk;
+  }
+
   &::after {
     content: "";
     display: block;
     height: 100%;
     background-color: $color-primary;
     transition: width 0.3s ease;
+
+    @include dark {
+      background-color: $color-primary-dk;
+    }
   }
 }
 
