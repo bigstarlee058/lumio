@@ -222,11 +222,11 @@ export class GmailOAuthService extends OAuthIntegrationBaseService {
 
     if (accessToken) {
       tokenRecord.encryptedAccessToken = encryptText(accessToken);
-      tokenRecord.accessToken = accessToken;
+      tokenRecord.accessToken = null;
     }
     if (refreshToken) {
       tokenRecord.encryptedRefreshToken = encryptText(refreshToken);
-      tokenRecord.refreshToken = refreshToken;
+      tokenRecord.refreshToken = null;
     }
     if (tokens.expires_in) {
       tokenRecord.expiresAt = new Date(Date.now() + tokens.expires_in * 1000);
@@ -290,6 +290,7 @@ export class GmailOAuthService extends OAuthIntegrationBaseService {
     } else if (tokenRecord.refreshToken) {
       refreshToken = tokenRecord.refreshToken;
       tokenRecord.encryptedRefreshToken = encryptText(refreshToken);
+      tokenRecord.refreshToken = null;
     } else {
       throw new BadRequestException('No refresh token available');
     }
@@ -299,7 +300,7 @@ export class GmailOAuthService extends OAuthIntegrationBaseService {
 
       if (refreshed.accessToken) {
         tokenRecord.encryptedAccessToken = encryptText(refreshed.accessToken);
-        tokenRecord.accessToken = refreshed.accessToken;
+        tokenRecord.accessToken = null;
       }
       if (refreshed.expiresAt) {
         tokenRecord.expiresAt = refreshed.expiresAt;
@@ -360,6 +361,7 @@ export class GmailOAuthService extends OAuthIntegrationBaseService {
       // Migrate plain token to encrypted
       accessToken = tokenRecord.accessToken;
       tokenRecord.encryptedAccessToken = encryptText(accessToken);
+      tokenRecord.accessToken = null;
       await this.integrationTokenRepository.save(tokenRecord);
     } else {
       throw new BadRequestException('No access token available');

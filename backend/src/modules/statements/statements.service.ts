@@ -1,8 +1,6 @@
-import { exec } from 'child_process';
 import { createHash } from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
-import { promisify } from 'util';
 import archiver = require('archiver');
 import { randomUUID } from 'node:crypto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -23,6 +21,7 @@ import { ensureCanEdit } from '../../common/utils/ensure-can-edit.util';
 import { calculateFileHash } from '../../common/utils/file-hash.util';
 import { getFileTypeFromMime, validateFile } from '../../common/utils/file-validator.util';
 import { normalizeFilename } from '../../common/utils/filename.util';
+import { runExecutable } from '../../common/utils/thumbnail-command.util';
 import { resolveUploadsDir } from '../../common/utils/uploads.util';
 import { Category, WorkspaceMember, WorkspaceRole } from '../../entities';
 import { ActorType, AuditAction, EntityType, Severity } from '../../entities/audit-event.entity';
@@ -67,7 +66,6 @@ type StatementTransactionSummaryRow = {
   cardLabel: string | null;
 };
 
-const execAsync = promisify(exec);
 const APPROVED_STATUSES = [
   StatementStatus.VALIDATED,
   StatementStatus.COMPLETED,
@@ -276,7 +274,12 @@ export class StatementsService {
     thumbnailWidth: number,
   ): Promise<void> {
     const scriptPath = path.join(__dirname, '../../../scripts/generate-thumbnail.py');
-    await execAsync(`python3 "${scriptPath}" "${pdfPath}" "${thumbnailPath}" ${thumbnailWidth}`);
+    await runExecutable('python3', [
+      scriptPath,
+      pdfPath,
+      thumbnailPath,
+      String(thumbnailWidth),
+    ]);
   }
 
   private async generateThumbnailWithQuickLook(
@@ -284,7 +287,14 @@ export class StatementsService {
     outputDir: string,
     thumbnailWidth: number,
   ): Promise<string> {
-    await execAsync(`qlmanage -t -s ${thumbnailWidth} -o "${outputDir}" "${pdfPath}"`);
+    await runExecutable('qlmanage', [
+      '-t',
+      '-s',
+      String(thumbnailWidth),
+      '-o',
+      outputDir,
+      pdfPath,
+    ]);
     const generatedPath = path.join(outputDir, `${path.basename(pdfPath)}.png`);
     if (!fs.existsSync(generatedPath)) {
       throw new Error('Quick Look thumbnail output not found');

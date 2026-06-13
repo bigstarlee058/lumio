@@ -11,6 +11,7 @@ export interface AuthenticatedRequest extends Request {
   workspace?: Workspace;
   workspaceRole?: WorkspaceRole;
   workspaceMemberPermissions?: WorkspaceMemberPermissions | null;
+  apiKeyWorkspaceId?: string;
   requestId?: string;
   traceId?: string;
 }

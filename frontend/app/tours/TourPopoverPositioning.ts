@@ -243,23 +243,32 @@ export function stabilizeTourPopover(popover: PopoverDOM, placement?: TourPopove
   wrapper.style.transition = POPOVER_MOVE_TRANSITION;
   wrapper.style.willChange = 'left, top';
 
-  let animationFrame = 0;
+  let followFrame = 0;
+  let scheduledFrame = 0;
+  let recheckTimeout = 0;
   const reposition = (): void => {
-    animationFrame = 0;
     const activeElement = document.querySelector('.driver-active-element');
     const bounds = resolveTourBounds(activeElement);
     applyPopoverSize(wrapper, bounds);
     positionTourPopoverNearElement(wrapper, activeElement, bounds, placement);
   };
+  const followActiveElement = (): void => {
+    reposition();
+    followFrame = window.requestAnimationFrame(followActiveElement);
+  };
   const scheduleReposition = (): void => {
-    if (animationFrame) {
-      window.cancelAnimationFrame(animationFrame);
+    if (scheduledFrame) {
+      window.cancelAnimationFrame(scheduledFrame);
     }
-    animationFrame = window.requestAnimationFrame(reposition);
+    scheduledFrame = window.requestAnimationFrame(() => {
+      scheduledFrame = 0;
+      reposition();
+    });
   };
 
   reposition();
-  window.setTimeout(scheduleReposition, POSITION_RECHECK_DELAY_MS);
+  followFrame = window.requestAnimationFrame(followActiveElement);
+  recheckTimeout = window.setTimeout(reposition, POSITION_RECHECK_DELAY_MS);
 
   const controller = new AbortController();
   window.addEventListener('resize', scheduleReposition, {
@@ -273,8 +282,14 @@ export function stabilizeTourPopover(popover: PopoverDOM, placement?: TourPopove
   });
 
   activeCleanup = (): void => {
-    if (animationFrame) {
-      window.cancelAnimationFrame(animationFrame);
+    if (followFrame) {
+      window.cancelAnimationFrame(followFrame);
+    }
+    if (scheduledFrame) {
+      window.cancelAnimationFrame(scheduledFrame);
+    }
+    if (recheckTimeout) {
+      window.clearTimeout(recheckTimeout);
     }
     controller.abort();
   };

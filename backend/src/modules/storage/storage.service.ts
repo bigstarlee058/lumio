@@ -29,6 +29,7 @@ import {
   WorkspaceMember,
   WorkspaceRole,
 } from '../../entities';
+import { neutralizeSpreadsheetFormulaCell } from '../../common/utils/spreadsheet-formula.util';
 import { MetricsService } from '../observability/metrics.service';
 import { StatementsService } from '../statements/statements.service';
 import type { CreateFolderDto } from './dto/create-folder.dto';
@@ -799,7 +800,11 @@ export class StorageService {
       (t.paymentPurpose || '').replace(/\n/g, ' '),
     ]);
     const csv = [header, ...rows]
-      .map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(','))
+      .map(r =>
+        r
+          .map(v => `"${String(neutralizeSpreadsheetFormulaCell(v)).replace(/"/g, '""')}"`)
+          .join(','),
+      )
       .join('\n');
     const fileName = `transactions-${statementId}.csv`;
     return { csv, fileName };

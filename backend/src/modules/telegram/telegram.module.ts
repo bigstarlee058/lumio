@@ -7,6 +7,7 @@ import { AuditModule } from '../audit/audit.module';
 import { ReportsModule } from '../reports/reports.module';
 import { StatementsModule } from '../statements/statements.module';
 import { TelegramWebhookController } from './telegram-webhook.controller';
+import { TelegramWebhookGuard } from './telegram-webhook.guard';
 import { TelegramController } from './telegram.controller';
 import { TelegramScheduler } from './telegram.scheduler';
 import { TelegramService } from './telegram.service';
@@ -20,7 +21,7 @@ import { TelegramService } from './telegram.service';
     AuditModule,
   ],
   controllers: [TelegramController, TelegramWebhookController],
-  providers: [TelegramService, TelegramScheduler],
+  providers: [TelegramService, TelegramScheduler, TelegramWebhookGuard],
   exports: [TelegramService],
 })
 export class TelegramModule {}

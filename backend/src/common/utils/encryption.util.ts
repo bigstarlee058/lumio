@@ -4,8 +4,12 @@ const ENCRYPTION_PREFIX = 'enc:';
 const ALGORITHM = 'aes-256-gcm';
 
 const getEncryptionKey = () => {
-  const secret = process.env.INTEGRATIONS_ENCRYPTION_KEY || process.env.JWT_SECRET || 'lumio';
-  return crypto.createHash('sha256').update(secret).digest();
+  const secret = process.env.INTEGRATIONS_ENCRYPTION_KEY;
+  if (!secret && process.env.NODE_ENV === 'production') {
+    throw new Error('Missing required environment variable: INTEGRATIONS_ENCRYPTION_KEY');
+  }
+  const resolvedSecret = secret || process.env.JWT_SECRET || 'lumio';
+  return crypto.createHash('sha256').update(resolvedSecret).digest();
 };
 
 export const encryptText = (value: string): string => {

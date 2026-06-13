@@ -1,6 +1,14 @@
 jest.mock('imapflow', () => ({ ImapFlow: jest.fn() }));
 jest.mock('webdav', () => ({ createClient: jest.fn() }));
-jest.mock('@aws-sdk/client-s3', () => ({ S3Client: jest.fn(), PutObjectCommand: jest.fn(), HeadBucketCommand: jest.fn() }));
+jest.mock('../../../../src/common/utils/egress-url.util', () => ({
+  assertPublicEgressHost: jest.fn(),
+  assertPublicEgressUrl: jest.fn(),
+}));
+jest.mock('@aws-sdk/client-s3', () => ({
+  S3Client: jest.fn(),
+  PutObjectCommand: jest.fn(),
+  HeadBucketCommand: jest.fn(),
+}));
 
 import { ImapFlow } from 'imapflow';
 import { OpenProtocolIntegrationsService } from '../../../../src/modules/open-protocol-integrations/open-protocol-integrations.service';
@@ -24,9 +32,16 @@ const logoutMock = jest.fn();
 
 const createService = () =>
   new OpenProtocolIntegrationsService(
-    {} as never, {} as never, {} as never, {} as never,
-    {} as never, {} as never, {} as never, {} as never,
-    {} as never, {} as never,
+    {} as never,
+    {} as never,
+    {} as never,
+    {} as never,
+    {} as never,
+    {} as never,
+    {} as never,
+    {} as never,
+    {} as never,
+    {} as never,
   );
 
 describe('OpenProtocolIntegrationsService.listImapFolders', () => {
