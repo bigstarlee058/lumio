@@ -9,8 +9,8 @@ import {
   Workspace,
   WorkspaceMember,
   WorkspaceRole,
-} from '@/entities';
-import { DEFAULT_BALANCE_ACCOUNTS } from '@/modules/balance/balance-default-accounts';
+} from '../../entities';
+import { DEFAULT_BALANCE_ACCOUNTS } from '../../modules/balance/balance-default-accounts';
 import type { Repository } from 'typeorm';
 
 export const DEMO_EMAIL = 'demo@lumio.dev';
