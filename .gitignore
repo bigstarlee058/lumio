@@ -16,8 +16,6 @@ dist/
 out/
 
 # Environment variables
-.env
-.env*
 backend/.env*
 frontend/.env*
 
@@ -28,7 +26,6 @@ frontend/.env*
 !frontend/.env.local.example
 
 # IDE
-.vscode/
 .idea/
 *.swp
 *.swo
@@ -69,3 +66,4 @@ docker-compose.override.yml
 branch_structure.json
 temp_auto_push.bat
 temp_interactive_push.bat
+config.bat
