@@ -6,9 +6,9 @@
   "scripts": {
     "prepare": "husky",
     "install:all": "npm install && npm --prefix backend install && npm --prefix frontend install",
-    "build": "npm --prefix frontend run build && npm --prefix backend run build",
-    "start": "node backend/dist/main.js",
-    "dev": "concurrently \"npm --prefix backend run start:dev\" \"npm --prefix frontend run dev\"",
+    "build": "node init && npm --prefix frontend run build && npm --prefix backend run build",
+    "start": "node init && node backend/dist/main.js",
+    "dev": "node init && concurrently \"npm --prefix backend run start:dev\" \"npm --prefix frontend run dev\"",
     "backend:build": "npm --prefix backend run build",
     "backend:start": "npm --prefix backend run start",
     "backend:dev": "npm --prefix backend run start:dev",
