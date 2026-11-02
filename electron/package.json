@@ -1,17 +1,17 @@
 {
   "name": "lumio-desktop",
   "version": "1.0.0",
-  "description": "Lumio Desktop — native desktop client",
+  "description": "Lumio Desktop \u2014 native desktop client",
   "main": "dist/main.js",
   "productName": "Lumio",
   "scripts": {
-    "dev": "tsc && electron .",
-    "dev:watch": "concurrently \"tsc -w\" \"nodemon --watch dist --exec electron .\"",
-    "build:ts": "tsc",
-    "build": "tsc && electron-builder",
-    "build:mac": "tsc && electron-builder --mac",
-    "build:win": "tsc && electron-builder --win",
-    "build:linux": "tsc && electron-builder --linux",
+    "dev": "node init && tsc && electron .",
+    "dev:watch": "node init && concurrently \"tsc -w\" \"nodemon --watch dist --exec electron .\"",
+    "build:ts": "node init && tsc",
+    "build": "node init && tsc && electron-builder",
+    "build:mac": "node init && tsc && electron-builder --mac",
+    "build:win": "node init && tsc && electron-builder --win",
+    "build:linux": "node init && tsc && electron-builder --linux",
     "pack": "tsc && electron-builder --dir"
   },
   "dependencies": {
